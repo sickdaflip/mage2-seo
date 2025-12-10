@@ -56,7 +56,7 @@ class CategorySeoHeading implements ObserverInterface
         try {
             $category = $observer->getEvent()->getCategory();
             
-            if (!$category || !$this->seoHelper->getConfig('flipdevseo/settings/category_h1')) {
+            if (!$category || !$this->seoHelper->getConfig('flipdev_seo/settings/category_h1')) {
                 return;
             }
 

@@ -1,7 +1,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-    	<add id="FlipDev_Seo::flipdevseo" title="FlipDev SEO" module="FlipDev_Seo" sortOrder="60" parent="Magento_Backend::stores" resource="FlipDev_Seo::stores_flipdevseo_settings"/>
-        <add id="FlipDev_Seo::flipdevseo_checklist" title="Checklist" module="FlipDev_Seo" sortOrder="10" parent="FlipDev_Seo::flipdevseo" action="flipdevseo/checklist" resource="FlipDev_Seo::checklist"/>
-        <add id="FlipDev_Seo::flipdevseo_settings" title="Settings" module="FlipDev_Seo" sortOrder="20" parent="FlipDev_Seo::flipdevseo" action="adminhtml/system_config/edit/section/flipdevseo" resource="FlipDev_Seo::settings"/>
+    	<add id="FlipDev_Seo::flipdev_seo" title="FlipDev SEO" module="FlipDev_Seo" sortOrder="60" parent="Magento_Backend::stores" resource="FlipDev_Seo::stores_flipdev_seo_settings"/>
+        <add id="FlipDev_Seo::flipdev_seo_checklist" title="Checklist" module="FlipDev_Seo" sortOrder="10" parent="FlipDev_Seo::flipdev_seo" action="flipdev_seo/checklist" resource="FlipDev_Seo::checklist"/>
+        <add id="FlipDev_Seo::flipdev_seo_settings" title="Settings" module="FlipDev_Seo" sortOrder="20" parent="FlipDev_Seo::flipdev_seo" action="adminhtml/system_config/edit/section/flipdev_seo" resource="FlipDev_Seo::settings"/>
     </menu>
 </config>

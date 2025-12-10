@@ -56,7 +56,7 @@ class CanonicalProductRedirect implements ObserverInterface
         try {
             $product = $observer->getEvent()->getProduct();
             
-            if (!$product || !$this->seoHelper->getConfig('flipdevseo/settings/forcecanonical')) {
+            if (!$product || !$this->seoHelper->getConfig('flipdev_seo/settings/forcecanonical')) {
                 return;
             }
 

@@ -79,7 +79,7 @@ class TrustedStores extends \Magento\Framework\View\Element\Template
      */
     public function getGtsConfig($configpath)
     {
-        return $this->helper->getConfig('flipdevseo/google_trusted_store/'.$configpath);
+        return $this->helper->getConfig('flipdev_seo/google_trusted_store/'.$configpath);
     }
 
     /**

@@ -207,10 +207,10 @@ class Data extends AbstractHelper
      */
     private function setDefaultMetaTitle(object $object, string $type): void
     {
-        if (empty($object->getMetaTitle()) && 
-            $this->getConfig("flipdevseo/metadata/{$type}_title_enabled")) {
-            
-            $template = $this->getConfig("flipdevseo/metadata/{$type}_title");
+        if (empty($object->getMetaTitle()) &&
+            $this->getConfig("flipdev_seo/metadata/{$type}_title_enabled")) {
+
+            $template = $this->getConfig("flipdev_seo/metadata/{$type}_title");
             if ($template) {
                 $metaTitle = $this->shortcode($template, $object);
                 $object->setMetaTitle($metaTitle);
@@ -232,10 +232,10 @@ class Data extends AbstractHelper
      */
     private function setDefaultMetaDescription(object $object, string $type): void
     {
-        if (empty($object->getMetaDescription()) && 
-            $this->getConfig("flipdevseo/metadata/{$type}_metadesc_enabled")) {
-            
-            $template = $this->getConfig("flipdevseo/metadata/{$type}_metadesc");
+        if (empty($object->getMetaDescription()) &&
+            $this->getConfig("flipdev_seo/metadata/{$type}_metadesc_enabled")) {
+
+            $template = $this->getConfig("flipdev_seo/metadata/{$type}_metadesc");
             if ($template) {
                 $metaDescription = $this->shortcode($template, $object);
                 $object->setMetaDescription($metaDescription);

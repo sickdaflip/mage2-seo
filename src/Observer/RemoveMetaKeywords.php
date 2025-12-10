@@ -54,7 +54,7 @@ class RemoveMetaKeywords implements ObserverInterface
     public function execute(Observer $observer): void
     {
         try {
-            if (!$this->seoHelper->getConfig('flipdevseo/settings/removekeywords')) {
+            if (!$this->seoHelper->getConfig('flipdev_seo/settings/removekeywords')) {
                 return;
             }
 

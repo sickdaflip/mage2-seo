@@ -1,6 +1,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <flipdevseo>
+        <flipdev_seo>
             <settings>
                 <noindexparams>1</noindexparams>
                 <noindexparamssearch>1</noindexparamssearch>
@@ -52,6 +52,6 @@
                 <enabled>0</enabled>
                 <badge_position>gts_bottom_right</badge_position>
             </google_trusted_store>
-        </flipdevseo>
+        </flipdev_seo>
     </default>
 </config>

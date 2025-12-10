@@ -54,7 +54,7 @@ class SetSearchMetaRobots implements ObserverInterface
     public function execute(Observer $observer): void
     {
         try {
-            if (!$this->seoHelper->getConfig('flipdevseo/settings/noindexparamssearch')) {
+            if (!$this->seoHelper->getConfig('flipdev_seo/settings/noindexparamssearch')) {
                 return;
             }
 
