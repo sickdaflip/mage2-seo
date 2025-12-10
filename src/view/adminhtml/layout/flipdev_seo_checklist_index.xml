@@ -14,7 +14,7 @@
             </block>
         </referenceContainer>
         <referenceContainer name="content">
-            <block name="flipdevseo.checklist" class="\FlipDev\Seo\Block\Adminhtml\Checklist"
+            <block name="flipdevseo.checklist" class="FlipDev\Seo\Block\Adminhtml\Checklist"
                    template="checklist.phtml" />
         </referenceContainer>
     </body>
