@@ -55,13 +55,34 @@ class DefaultCategoryMeta implements ObserverInterface
     {
         try {
             $category = $observer->getEvent()->getCategory();
-            
+
             if (!$category) {
                 return;
             }
 
+            // Clean existing meta description if set
+            if (!empty($category->getMetaDescription())) {
+                $metaDesc = $category->getMetaDescription();
+                $metaDesc = strip_tags($metaDesc);
+                $metaDesc = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaDesc);
+                $metaDesc = preg_replace('/\s+/', ' ', $metaDesc);
+                $metaDesc = trim($metaDesc);
+                $category->setMetaDescription($metaDesc);
+            }
+
+            // Clean existing meta title if set
+            if (!empty($category->getMetaTitle())) {
+                $metaTitle = $category->getMetaTitle();
+                $metaTitle = strip_tags($metaTitle);
+                $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
+                $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
+                $metaTitle = trim($metaTitle);
+                $category->setMetaTitle($metaTitle);
+            }
+
+            // Set default meta data if not set
             $this->seoHelper->checkMetaData($category, 'category');
-            
+
             $robots = $category->getData('flipdevseo_metarobots');
             if ($robots) {
                 $this->pageConfig->setRobots($robots);
