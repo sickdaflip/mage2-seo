@@ -20,16 +20,16 @@ namespace FlipDev\Seo\Block {
 
         /**
          * @param \Magento\Framework\View\Element\Template\Context $context
-         * @param \FlipDev\Seo\Helper\Data $foxSeoHelper
+         * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
          * @param array $data
          */
         public function __construct(
             \Magento\Framework\View\Element\Template\Context $context,
-            \FlipDev\Seo\Helper\Data $foxSeoHelper,
+            \FlipDev\Seo\Helper\Data $flipDevSeoHelper,
             array $data = []
         )
         {
-            $this->helper = $foxSeoHelper;
+            $this->helper = $flipDevSeoHelper;
             parent::__construct($context, $data);
         }
 

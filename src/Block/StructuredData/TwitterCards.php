@@ -44,7 +44,7 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \FlipDev\Seo\Helper\Data $foxSeoHelper
+     * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Bundle\Model\Product\Price $bundlePrice
      * @param PriceCurrencyInterface $priceCurrency
@@ -52,14 +52,14 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \FlipDev\Seo\Helper\Data $foxSeoHelper,
+        \FlipDev\Seo\Helper\Data $flipDevSeoHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Bundle\Model\Product\Price $bundlePrice,
         PriceCurrencyInterface $priceCurrency,
         array $data = []
     )
     {
-        $this->helper = $foxSeoHelper;
+        $this->helper = $flipDevSeoHelper;
         $this->_coreRegistry = $registry;
         $this->_bundlePrice = $bundlePrice;
         $this->_priceCurrency = $priceCurrency;
