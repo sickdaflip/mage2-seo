@@ -307,24 +307,6 @@
             </group>
 
             <!--
-                Google Sitelink Search
-            -->
-
-            <group id="google_sitelink_search" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1"
-                   showInStore="1">
-                <label>Google Sitelink Search</label>
-                <comment>
-                    <![CDATA[
-                            <p>If you enable Sitelink Search you will provide Google with structured data about the search form on your website. For more information go here: <a href="https://developers.google.com/structured-data/slsb-overview" target="_blank">https://developers.google.com/structured-data/slsb-overview</a></p>
-                        ]]>
-                </comment>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Sitelink Search?</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-            </group>
-
-            <!--
                 Google Trusted Stores
             -->
 

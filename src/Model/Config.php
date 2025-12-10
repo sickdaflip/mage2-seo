@@ -28,7 +28,6 @@ class Config implements ConfigInterface
     private const XML_PATH_ORGANIZATION = 'flipdev_seo/organization_sd/';
     private const XML_PATH_SOCIAL = 'flipdev_seo/social_sd/';
     private const XML_PATH_GTM = 'flipdev_seo/google_tag_manager/';
-    private const XML_PATH_SITELINK = 'flipdev_seo/google_sitelink_search/';
     private const XML_PATH_GTS = 'flipdev_seo/google_trusted_store/';
 
     private ScopeConfigInterface $scopeConfig;
@@ -288,14 +287,6 @@ class Config implements ConfigInterface
     public function getGoogleTagManagerId(): ?string
     {
         return $this->getValue(self::XML_PATH_GTM . 'gtm_id');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isGoogleSitelinkSearchEnabled(): bool
-    {
-        return $this->isEnabled(self::XML_PATH_SITELINK . 'enabled');
     }
 
     /**

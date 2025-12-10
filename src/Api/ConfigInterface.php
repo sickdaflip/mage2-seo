@@ -203,13 +203,6 @@ interface ConfigInterface
     public function getGoogleTagManagerId(): ?string;
 
     /**
-     * Check if Google Sitelink Search is enabled
-     *
-     * @return bool
-     */
-    public function isGoogleSitelinkSearchEnabled(): bool;
-
-    /**
      * Check if Google Trusted Store is enabled
      *
      * @return bool

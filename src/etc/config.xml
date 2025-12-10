@@ -45,9 +45,6 @@
             <google_content_grouping>
                 <enabled>0</enabled>
             </google_content_grouping>
-            <google_sitelink_search>
-                <enabled>1</enabled>
-            </google_sitelink_search>
             <google_trusted_store>
                 <enabled>0</enabled>
                 <badge_position>gts_bottom_right</badge_position>
