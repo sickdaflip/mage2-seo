@@ -83,6 +83,14 @@ class DefaultCategoryMeta implements ObserverInterface
             // Set default meta data if not set
             $this->seoHelper->checkMetaData($category, 'category');
 
+            // Apply meta data to page config
+            if ($category->getMetaTitle()) {
+                $this->pageConfig->setMetaTitle($category->getMetaTitle());
+            }
+            if ($category->getMetaDescription()) {
+                $this->pageConfig->setDescription($category->getMetaDescription());
+            }
+
             $robots = $category->getData('flipdevseo_metarobots');
             if ($robots) {
                 $this->pageConfig->setRobots($robots);

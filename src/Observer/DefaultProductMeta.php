@@ -83,6 +83,14 @@ class DefaultProductMeta implements ObserverInterface
             // Set default meta data if not set
             $this->seoHelper->checkMetaData($product, 'product');
 
+            // Apply meta data to page config
+            if ($product->getMetaTitle()) {
+                $this->pageConfig->setMetaTitle($product->getMetaTitle());
+            }
+            if ($product->getMetaDescription()) {
+                $this->pageConfig->setDescription($product->getMetaDescription());
+            }
+
             $robots = $product->getData('flipdevseo_metarobots');
             if ($robots) {
                 $this->pageConfig->setRobots($robots);
