@@ -1,0 +1,64 @@
+{
+    "name": "sickdaflip/mage2-seo",
+    "description": "Professional SEO toolkit for Magento 2 - Structured data, meta optimization, and Google integrations. Built for PHP 8.4+.",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "keywords": [
+        "magento2",
+        "seo",
+        "structured-data",
+        "meta-tags",
+        "canonical",
+        "schema-org",
+        "google-integrations",
+        "json-ld",
+        "twitter-cards",
+        "php84"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philipp Breitsprecher",
+            "email": "philippbreitsprecher@gmail.com",
+            "homepage": "https://github.com/sickdaflip",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "philippbreitsprecher@gmail.com",
+        "issues": "https://github.com/sickdaflip/mage2-seo/issues",
+        "source": "https://github.com/sickdaflip/mage2-seo"
+    },
+    "require": {
+        "php": "^8.4",
+        "magento/framework": "^103.0",
+        "magento/module-backend": "^102.0",
+        "magento/module-catalog": "^104.0",
+        "magento/module-cms": "^104.0",
+        "magento/module-config": "^101.2",
+        "magento/module-eav": "^102.1",
+        "magento/module-store": "^101.1"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "FlipDev\\Seo\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "magento/magento-composer-installer": true
+        }
+    }
+}

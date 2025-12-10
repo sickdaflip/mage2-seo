@@ -1,0 +1,29 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_catalog_product_view">
+        <observer name="discontinued.product" instance="FlipDev\Seo\Observer\DiscontinuedProductCheck" />
+        <observer name="canonical.redirect" instance="FlipDev\Seo\Observer\CanonicalProductRedirect" />
+    </event>
+    <event name="controller_action_predispatch_catalog_category_view">
+        <observer name="discontinued.category" instance="FlipDev\Seo\Observer\DiscontinuedCategoryCheck" />
+        <observer name="category.noindex" instance="FlipDev\Seo\Observer\SetCategoryMetaRobots" />
+    </event>
+    <event name="controller_action_layout_render_before_catalogsearch_advanced_result">
+        <observer name="advancedsearch.noindex" instance="FlipDev\Seo\Observer\SetAdvancedSearchMetaRobots" />
+    </event>
+    <event name="controller_action_layout_render_before_catalogsearch_result_index">
+        <observer name="search.noindex" instance="FlipDev\Seo\Observer\SetSearchMetaRobots" />
+    </event>
+    <event name="controller_action_layout_render_before_contact_index_index">
+        <observer name="contact.meta" instance="FlipDev\Seo\Observer\SetContactMetaDescTitle" />
+    </event>
+    <event name="controller_action_postdispatch">
+        <observer name="remove.meta.keywords" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" />
+    </event>
+    <event name="catalog_controller_product_init_after">
+        <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
+    </event>
+    <event name="catalog_controller_category_init_after">
+        <observer name="seo.heading" instance="FlipDev\Seo\Observer\CategorySeoHeading" />
+        <observer name="default.category.meta" instance="FlipDev\Seo\Observer\DefaultCategoryMeta" />
+    </event>
+</config>
