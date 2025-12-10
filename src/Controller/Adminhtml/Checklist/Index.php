@@ -29,10 +29,10 @@ class Index extends \Magento\Backend\App\Action
         $this->_view->loadLayout();
 
         $this->_setActiveMenu('FlipDev_Seo::checklist');
-        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('FoxSEO Checklist'));
+        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('SEO Checklist'));
 
         $this->_addBreadcrumb(__('Stores'), __('Stores'));
-        $this->_addBreadcrumb(__('FoxSEO Checklist'), __('FoxSEO Checklist'));
+        $this->_addBreadcrumb(__('SEO Checklist'), __('SEO Checklist'));
 
         $this->_view->renderLayout();
     }
