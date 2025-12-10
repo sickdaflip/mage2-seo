@@ -18,7 +18,8 @@
         "magento/module-cms": "^104.0",
         "magento/module-config": "^101.2",
         "magento/module-eav": "^102.1",
-        "magento/module-store": "^101.1"
+        "magento/module-store": "^101.1".
+        "sickdaflip/mage2-core": "^1.0"
     },
     "autoload": {
         "files": [
