@@ -22,10 +22,10 @@
     },
     "autoload": {
         "files": [
-            "registration.php"
+            "src/registration.php"
         ],
         "psr-4": {
-            "FlipDev\\Seo\\": ""
+            "FlipDev\\Seo\\": "src/"
         }
     }
 }
