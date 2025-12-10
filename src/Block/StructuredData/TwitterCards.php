@@ -84,7 +84,7 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
 
     public function getConfig(string $configPath): ?string
     {
-        return $this->helper->getConfig($configpath);
+        return $this->helper->getConfig($configPath);
     }
 
     public function getStartingPrice($product)

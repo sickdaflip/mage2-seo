@@ -34,12 +34,12 @@ namespace FlipDev\Seo\Block {
         }
 
         /**
-         * @param $configpath
-         * @return mixed
+         * @param string $configPath
+         * @return string|null
          */
         public function getConfig(string $configPath): ?string
         {
-            return $this->helper->getConfig($configpath);
+            return $this->helper->getConfig($configPath);
         }
     }
 }
