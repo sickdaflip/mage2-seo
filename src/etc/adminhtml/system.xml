@@ -1,12 +1,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="flipdevseo" translate="label" sortOrder="200">
-            <label>FlipDev SEO</label>
-        </tab>
         <section id="flipdevseo" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1"
                  showInStore="1">
-            <label>SEO Settings</label>
-            <tab>flipdevseo</tab>
+            <label>SEO</label>
+            <tab>flipdev</tab>
             <resource>FlipDev_Seo::settings</resource>
 
             <!--
