@@ -199,7 +199,8 @@ class Data extends AbstractHelper
      */
     public function checkMetaData(object $object, string $type): void
     {
-        if (!method_exists($object, 'getMetaTitle') || !method_exists($object, 'setMetaTitle')) {
+        // Use is_callable instead of method_exists to handle Interceptor classes
+        if (!is_callable([$object, 'getMetaTitle']) || !is_callable([$object, 'setMetaTitle'])) {
             $this->logger->warning(
                 'FlipDev_Seo: Object does not support meta data',
                 ['class' => get_class($object)]
