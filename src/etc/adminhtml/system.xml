@@ -245,7 +245,7 @@
                 </field>
                 <field id="social_profiles" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Social Profiles</label>
-                    <comment><![CDATA[Add the full URLs to your social profiles (e.g. http://twitter.com/magentofox) - ONE per line!]]></comment>
+                    <comment><![CDATA[Add the full URLs to your social profiles (e.g. https://twitter.com/yourcompany, https://facebook.com/yourcompany) - ONE per line!]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
