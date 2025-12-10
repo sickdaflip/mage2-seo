@@ -51,20 +51,6 @@ php bin/magento setup:static-content:deploy
 php bin/magento cache:flush
 ```
 
-### Manual Installation
-
-1. Create directory: `app/code/FlipDev/Seo`
-2. Copy module files to this directory
-3. Run installation commands:
-
-```bash
-php bin/magento module:enable FlipDev_Seo
-php bin/magento setup:upgrade
-php bin/magento setup:di:compile
-php bin/magento setup:static-content:deploy
-php bin/magento cache:flush
-```
-
 ## ⚙️ Configuration
 
 Navigate to **Stores > Configuration > FlipDev SEO** or **Stores > FlipDev SEO > Settings**
