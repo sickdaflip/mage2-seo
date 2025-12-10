@@ -81,6 +81,14 @@ class FixPaginationCanonical implements ObserverInterface
             // Remove double && or ?&
             $canonicalUrl = preg_replace('/[?&]{2,}/', '?', $canonicalUrl);
 
+            // Remove existing canonical tags first
+            $assetCollection = $this->pageConfig->getAssetCollection();
+            foreach ($assetCollection->getAll() as $asset) {
+                if ($asset->getContentType() === 'canonical') {
+                    $assetCollection->remove($asset->getUrl());
+                }
+            }
+
             // Set the canonical URL to page 1
             $this->pageConfig->addRemotePageAsset(
                 $canonicalUrl,
