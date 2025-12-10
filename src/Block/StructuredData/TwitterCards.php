@@ -99,4 +99,18 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
         return $this->_priceCurrency->format($price, false);
 
     }
+
+    /**
+     * Get product image URL
+     *
+     * @param \Magento\Catalog\Model\Product $product
+     * @return string
+     */
+    public function getProductImageUrl($product)
+    {
+        $imageHelper = \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Catalog\Helper\Image::class);
+
+        return $imageHelper->init($product, 'product_page_image_large')->getUrl();
+    }
 }
