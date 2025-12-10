@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 /** @var \Magento\Framework\View\Element\Template $block */
 ?>
+<script type="application/ld+json">
 {
-"@context": "http://schema.org",
-"@type": "WebSite",
-"url": "<?php echo $block->getBaseUrl() ?>",
-"potentialAction": {
-"@type": "SearchAction",
-"target": "<?php echo $block->getBaseUrl() ?>catalogsearch/result/?q={search_term_string}",
-"query-input": "required name=search_term_string"
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "url": "<?php echo $block->getBaseUrl() ?>",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "<?php echo $block->getBaseUrl() ?>catalogsearch/result/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
 }
-}
+</script>
