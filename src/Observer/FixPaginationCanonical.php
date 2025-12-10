@@ -17,20 +17,23 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\View\Page\Config as PageConfig;
 use Magento\Framework\App\RequestInterface;
-use Magento\Framework\UrlInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Fix pagination canonical URLs
+ * Remove NOINDEX from pagination pages
  *
- * Sets canonical to page 1 (without ?p= parameter) on paginated pages
- * This prevents self-referencing canonicals on NOINDEX pages
+ * According to Google's current guidelines (2024+):
+ * - Pagination pages should have self-referencing canonical URLs
+ * - Pagination pages should be INDEX,FOLLOW (not NOINDEX)
+ * - NOINDEX should only be used for filters/sorting, not regular pagination
+ *
+ * This observer removes the NOINDEX that Magento sets on pagination pages,
+ * allowing them to be indexed with their self-referencing canonicals.
  */
 class FixPaginationCanonical implements ObserverInterface
 {
     private PageConfig $pageConfig;
     private RequestInterface $request;
-    private UrlInterface $url;
     private LoggerInterface $logger;
 
     /**
@@ -38,18 +41,15 @@ class FixPaginationCanonical implements ObserverInterface
      *
      * @param PageConfig $pageConfig
      * @param RequestInterface $request
-     * @param UrlInterface $url
      * @param LoggerInterface $logger
      */
     public function __construct(
         PageConfig $pageConfig,
         RequestInterface $request,
-        UrlInterface $url,
         LoggerInterface $logger
     ) {
         $this->pageConfig = $pageConfig;
         $this->request = $request;
-        $this->url = $url;
         $this->logger = $logger;
     }
 
@@ -69,44 +69,18 @@ class FixPaginationCanonical implements ObserverInterface
                 return;
             }
 
-            // Get current URL without pagination parameter
-            $currentUrl = $this->url->getCurrentUrl();
-
-            // Remove ?p=X or &p=X parameter
-            $canonicalUrl = preg_replace('/([?&])p=\d+(&|$)/', '$1', $currentUrl);
-
-            // Clean up trailing ? or &
-            $canonicalUrl = rtrim($canonicalUrl, '?&');
-
-            // Remove double && or ?&
-            $canonicalUrl = preg_replace('/[?&]{2,}/', '?', $canonicalUrl);
-
-            // Remove existing canonical tags first
-            $assetCollection = $this->pageConfig->getAssetCollection();
-            foreach ($assetCollection->getAll() as $asset) {
-                if ($asset->getContentType() === 'canonical') {
-                    $assetCollection->remove($asset->getUrl());
-                }
-            }
-
-            // Set the canonical URL to page 1
-            $this->pageConfig->addRemotePageAsset(
-                $canonicalUrl,
-                'canonical',
-                ['attributes' => ['rel' => 'canonical']]
-            );
+            // Remove NOINDEX from pagination pages
+            // Magento sets NOINDEX,FOLLOW by default, but according to Google's
+            // current guidelines, pagination should be INDEX,FOLLOW
+            $this->pageConfig->setRobots('INDEX,FOLLOW');
 
             $this->logger->debug(
-                'FlipDev_Seo: Fixed pagination canonical',
-                [
-                    'page' => $page,
-                    'original' => $currentUrl,
-                    'canonical' => $canonicalUrl
-                ]
+                'FlipDev_Seo: Removed NOINDEX from pagination page',
+                ['page' => $page]
             );
 
         } catch (\Exception $e) {
-            $this->logger->error('FlipDev_Seo: Pagination canonical fix failed', [
+            $this->logger->error('FlipDev_Seo: Pagination robots fix failed', [
                 'exception' => $e->getMessage()
             ]);
         }
