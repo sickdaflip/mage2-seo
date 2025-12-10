@@ -55,19 +55,36 @@ class SetCategoryMetaRobots implements ObserverInterface
     {
         try {
             $request = $observer->getEvent()->getRequest();
-            
+
             if (!$request) {
                 return;
             }
 
+            // Check if NOINDEX for filtered pages is enabled
+            if (!$this->seoHelper->getConfig('flipdev_seo/settings/noindexparams')) {
+                return;
+            }
+
             $requestUrl = $request->getRequestUri();
-            
-            if ($this->seoHelper->getConfig('flipdev_seo/settings/noindexparams') && 
-                stristr($requestUrl, '?')) {
-                
+
+            // Only apply NOINDEX if there are query parameters
+            if (!stristr($requestUrl, '?')) {
+                return;
+            }
+
+            // Parse query parameters
+            $params = $request->getParams();
+
+            // Remove pagination parameter - pagination should be indexed
+            unset($params['p']);
+
+            // If there are still other parameters (filters, sorting), set NOINDEX
+            if (!empty($params)) {
                 $this->pageConfig->setRobots('NOINDEX,FOLLOW');
-                
-                $this->logger->debug('FlipDev_Seo: Set NOINDEX for filtered category');
+
+                $this->logger->debug('FlipDev_Seo: Set NOINDEX for filtered/sorted category', [
+                    'params' => array_keys($params)
+                ]);
             }
         } catch (\Exception $e) {
             $this->logger->error('FlipDev_Seo: Category robots failed', [
