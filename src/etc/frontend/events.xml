@@ -26,4 +26,7 @@
         <observer name="seo.heading" instance="FlipDev\Seo\Observer\CategorySeoHeading" />
         <observer name="default.category.meta" instance="FlipDev\Seo\Observer\DefaultCategoryMeta" />
     </event>
+    <event name="cms_page_render">
+        <observer name="default.cms.meta" instance="FlipDev\Seo\Observer\DefaultCmsPageMeta" />
+    </event>
 </config>
