@@ -70,7 +70,20 @@ class Data extends AbstractHelper
      */
     public function cleanString(string $string): string
     {
-        return strip_tags(addcslashes($string, '"\\/'));
+        // Strip HTML tags
+        $string = strip_tags($string);
+
+        // Replace newlines, carriage returns, and tabs with spaces
+        $string = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $string);
+
+        // Collapse multiple spaces into single space
+        $string = preg_replace('/\s+/', ' ', $string);
+
+        // Trim leading and trailing whitespace
+        $string = trim($string);
+
+        // Escape quotes and slashes
+        return addcslashes($string, '"\\/');
     }
 
     /**
