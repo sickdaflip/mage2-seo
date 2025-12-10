@@ -226,8 +226,15 @@ class Data extends AbstractHelper
             $template = $this->getConfig("flipdev_seo/metadata/{$type}_title");
             if ($template) {
                 $metaTitle = $this->shortcode($template, $object);
+
+                // Clean the meta title: remove HTML tags, normalize whitespace
+                $metaTitle = strip_tags($metaTitle);
+                $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
+                $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
+                $metaTitle = trim($metaTitle);
+
                 $object->setMetaTitle($metaTitle);
-                
+
                 $this->logger->debug(
                     'FlipDev_Seo: Set default meta title',
                     ['type' => $type, 'title' => $metaTitle]
@@ -251,8 +258,15 @@ class Data extends AbstractHelper
             $template = $this->getConfig("flipdev_seo/metadata/{$type}_metadesc");
             if ($template) {
                 $metaDescription = $this->shortcode($template, $object);
+
+                // Clean the meta description: remove HTML tags, normalize whitespace
+                $metaDescription = strip_tags($metaDescription);
+                $metaDescription = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaDescription);
+                $metaDescription = preg_replace('/\s+/', ' ', $metaDescription);
+                $metaDescription = trim($metaDescription);
+
                 $object->setMetaDescription($metaDescription);
-                
+
                 $this->logger->debug(
                     'FlipDev_Seo: Set default meta description',
                     ['type' => $type, 'length' => strlen($metaDescription)]
