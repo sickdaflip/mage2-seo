@@ -7,11 +7,6 @@
             </block>
             <block class="FlipDev\Seo\Block\Template" name="flipdevseo.gtm" template="FlipDev_Seo::google/tagmanager.phtml" ifconfig="flipdevseo/google_tag_manager/enabled" />
         </referenceContainer>
-        <referenceBlock name="breadcrumbs">
-            <action method="setTemplate">
-                <argument name="template" xsi:type="string">FlipDev_Seo::structureddata/breadcrumbs.phtml</argument>
-            </action>
-        </referenceBlock>
         <referenceBlock name="footer_links">
             <block class="Magento\Framework\View\Element\Html\Link\Current" name="sitemap-link">
                 <arguments>

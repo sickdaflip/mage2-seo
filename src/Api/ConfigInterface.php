@@ -189,13 +189,6 @@ interface ConfigInterface
     public function getSocialProfiles(): array;
 
     /**
-     * Check if breadcrumbs structured data is enabled
-     *
-     * @return bool
-     */
-    public function isBreadcrumbsDataEnabled(): bool;
-
-    /**
      * Check if Google Tag Manager is enabled
      *
      * @return bool

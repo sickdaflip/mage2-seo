@@ -27,7 +27,6 @@ class Config implements ConfigInterface
     private const XML_PATH_METADATA = 'flipdevseo/metadata/';
     private const XML_PATH_ORGANIZATION = 'flipdevseo/organization_sd/';
     private const XML_PATH_SOCIAL = 'flipdevseo/social_sd/';
-    private const XML_PATH_BREADCRUMBS = 'flipdevseo/breadcrumbs_sd/';
     private const XML_PATH_GTM = 'flipdevseo/google_tag_manager/';
     private const XML_PATH_SITELINK = 'flipdevseo/google_sitelink_search/';
     private const XML_PATH_GTS = 'flipdevseo/google_trusted_store/';
@@ -265,22 +264,14 @@ class Config implements ConfigInterface
     public function getSocialProfiles(): array
     {
         $profiles = $this->getValue(self::XML_PATH_SOCIAL . 'social_profiles');
-        
+
         if (!$profiles) {
             return [];
         }
-        
+
         return array_filter(
             array_map('trim', explode("\n", $profiles))
         );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isBreadcrumbsDataEnabled(): bool
-    {
-        return $this->isEnabled(self::XML_PATH_BREADCRUMBS . 'enabled');
     }
 
     /**

@@ -39,9 +39,6 @@
             <logo_sd>
                 <enabled>1</enabled>
             </logo_sd>
-            <breadcrumbs_sd>
-                <enabled>1</enabled>
-            </breadcrumbs_sd>
             <google_tag_manager>
                 <enabled>0</enabled>
             </google_tag_manager>
