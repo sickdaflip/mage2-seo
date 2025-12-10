@@ -25,6 +25,8 @@
     <event name="catalog_controller_category_init_after">
         <observer name="seo.heading" instance="FlipDev\Seo\Observer\CategorySeoHeading" />
         <observer name="default.category.meta" instance="FlipDev\Seo\Observer\DefaultCategoryMeta" />
+    </event>
+    <event name="controller_action_layout_render_before_catalog_category_view">
         <observer name="fix.pagination.canonical" instance="FlipDev\Seo\Observer\FixPaginationCanonical" />
     </event>
     <event name="cms_page_render">
