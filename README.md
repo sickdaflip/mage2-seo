@@ -42,6 +42,7 @@ Professional SEO toolkit for Magento 2 built for modern PHP. Comprehensive featu
 ### Via Composer
 
 ```bash
+composer config repositories.flipdev/mage2-seo vcs https://github.com/sickdaflip/mage2-seo.git
 composer require sickdaflip/mage2-seo
 php bin/magento module:enable FlipDev_Seo
 php bin/magento setup:upgrade
