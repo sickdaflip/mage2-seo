@@ -1,4 +1,9 @@
-<?php $_product = $block->getProduct() ?>
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\StructuredData\TwitterCards $block */
+$_product = $block->getProduct();
+?>
 <meta name="twitter:card" content="product" />
 <meta name="twitter:site" content="@magentofox" />
 <meta name="twitter:title" content="<?php echo $block->cleanString($_product->getName()) ?>" />
