@@ -1,6 +1,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="admin">
-        <route id="flipdevseo" frontName="flipdevseo">
+        <route id="flipdev_seo" frontName="flipdev_seo">
             <module name="FlipDev_Seo" />
         </route>
     </router>

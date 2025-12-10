@@ -1,9 +1,13 @@
-<!-- Google Trusted Store from FoxSEO -->
-<?php $_badgePosition = $block->getGtsConfig('badge_position') ?>
-<?php $_gtsContainer = $block->getGtsConfig('gts_container') ?>
-<?php $_gtsCountry = $block->getGtsConfig('google_shopping_country') ?>
-<?php $_gtsLanguage = $block->getGtsConfig('google_shopping_language') ?>
-<?php $_gtsShoppingAccountId = $block->getGtsConfig('google_shopping_account_id') ?>
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\TrustedStores $block */
+$_badgePosition = $block->getGtsConfig('badge_position');
+$_gtsContainer = $block->getGtsConfig('gts_container');
+$_gtsCountry = $block->getGtsConfig('google_shopping_country');
+$_gtsLanguage = $block->getGtsConfig('google_shopping_language');
+$_gtsShoppingAccountId = $block->getGtsConfig('google_shopping_account_id');
+?>
 <script type="text/javascript">
     var gts = gts || [];
     gts.push(["id", "<?php echo $block->getGtsConfig('trusted_store_id') ?>"]);

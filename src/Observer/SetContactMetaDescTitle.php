@@ -54,12 +54,12 @@ class SetContactMetaDescTitle implements ObserverInterface
     public function execute(Observer $observer): void
     {
         try {
-            $metaDescription = $this->seoHelper->getConfig('flipdevseo/metadata/contact_metadesc');
+            $metaDescription = $this->seoHelper->getConfig('flipdev_seo/metadata/contact_metadesc');
             if ($metaDescription) {
                 $this->pageConfig->setDescription($metaDescription);
             }
 
-            $pageTitle = $this->seoHelper->getConfig('flipdevseo/metadata/contact_title');
+            $pageTitle = $this->seoHelper->getConfig('flipdev_seo/metadata/contact_title');
             if ($pageTitle) {
                 $this->pageConfig->getTitle()->set($pageTitle);
             }

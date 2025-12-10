@@ -1,23 +1,26 @@
-<h2><?php echo __('FoxSEO Configuration Settings') ?></h2>
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\Adminhtml\Checklist $block */
+?>
+<h2><?php echo __('SEO Configuration Settings') ?></h2>
 <div class="messages">
-    <?php echo $block->check('flipdevseo/settings/noindexparams', '1', __('NOINDEX meta tag for parameter-based category
+    <?php echo $block->check('flipdev_seo/settings/noindexparams', '1', __('NOINDEX meta tag for parameter-based category
     pages')) ?>
-    <?php echo $block->check('flipdevseo/settings/noindexparamssearch', '1', __('NOINDEX meta tag for search pages')) ?>
-    <?php echo $block->check('flipdevseo/settings/category_h1', '1', __('Custom headings (H1) on category pages')) ?>
-    <?php echo $block->check('flipdevseo/settings/forcecanonical', '1', __('Canonical product redirects')) ?>
-    <?php echo $block->check('flipdevseo/settings/enablecmscanonical', '1', __('Canonical meta tag for CMS pages')) ?>
-    <?php echo $block->check('flipdevseo/twittercards/enabled', '1', __('Twitter cards on product pages')) ?>
-    <?php echo $block->check('flipdevseo/organization_sd/enabled', '1', __('Organization structured data')) ?>
-    <?php echo $block->check('flipdevseo/social_sd/enabled', '1', __('Social structured data')) ?>
-    <?php echo $block->check('flipdevseo/logo_sd/enabled', '1', __('Logo structured data')) ?>
-    <?php echo $block->check('flipdevseo/breadcrumbs_sd/enabled', '1', __('Breadcrumbs structured data')) ?>
-    <?php echo $block->check('flipdevseo/google_tag_manager/enabled', '1', __('Google Tag Manager')) ?>
-    <?php echo $block->check('flipdevseo/google_content_grouping/enabled', '1', __('Google Content Grouping')) ?>
-    <?php echo $block->check('flipdevseo/google_sitelink_search/enabled', '1', __('Google Sitelink Search')) ?>
-    <?php echo $block->check('flipdevseo/metadata/product_title_enabled', '1', __('Default product page title fallbacks')) ?>
-    <?php echo $block->check('flipdevseo/metadata/product_metadesc_enabled', '1', __('Default product meta description fallbacks')) ?>
-    <?php echo $block->check('flipdevseo/metadata/category_title_enabled', '1', __('Default category page title fallbacks')) ?>
-    <?php echo $block->check('flipdevseo/metadata/category_metadesc_enabled', '1', __('Default category meta description fallbacks')) ?>
+    <?php echo $block->check('flipdev_seo/settings/noindexparamssearch', '1', __('NOINDEX meta tag for search pages')) ?>
+    <?php echo $block->check('flipdev_seo/settings/category_h1', '1', __('Custom headings (H1) on category pages')) ?>
+    <?php echo $block->check('flipdev_seo/settings/forcecanonical', '1', __('Canonical product redirects')) ?>
+    <?php echo $block->check('flipdev_seo/settings/enablecmscanonical', '1', __('Canonical meta tag for CMS pages')) ?>
+    <?php echo $block->check('flipdev_seo/twittercards/enabled', '1', __('Twitter cards on product pages')) ?>
+    <?php echo $block->check('flipdev_seo/organization_sd/enabled', '1', __('Organization structured data')) ?>
+    <?php echo $block->check('flipdev_seo/social_sd/enabled', '1', __('Social structured data')) ?>
+    <?php echo $block->check('flipdev_seo/logo_sd/enabled', '1', __('Logo structured data')) ?>
+    <?php echo $block->check('flipdev_seo/google_tag_manager/enabled', '1', __('Google Tag Manager')) ?>
+    <?php echo $block->check('flipdev_seo/google_content_grouping/enabled', '1', __('Google Content Grouping')) ?>
+    <?php echo $block->check('flipdev_seo/metadata/product_title_enabled', '1', __('Default product page title fallbacks')) ?>
+    <?php echo $block->check('flipdev_seo/metadata/product_metadesc_enabled', '1', __('Default product meta description fallbacks')) ?>
+    <?php echo $block->check('flipdev_seo/metadata/category_title_enabled', '1', __('Default category page title fallbacks')) ?>
+    <?php echo $block->check('flipdev_seo/metadata/category_metadesc_enabled', '1', __('Default category meta description fallbacks')) ?>
 </div>
 <h2><?php echo __('Magento Configuration Settings') ?></h2>
 <div class="messages">

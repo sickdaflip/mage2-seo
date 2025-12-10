@@ -70,7 +70,20 @@ class Data extends AbstractHelper
      */
     public function cleanString(string $string): string
     {
-        return strip_tags(addcslashes($string, '"\\/'));
+        // Strip HTML tags
+        $string = strip_tags($string);
+
+        // Replace newlines, carriage returns, and tabs with spaces
+        $string = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $string);
+
+        // Collapse multiple spaces into single space
+        $string = preg_replace('/\s+/', ' ', $string);
+
+        // Trim leading and trailing whitespace
+        $string = trim($string);
+
+        // Escape quotes and slashes
+        return addcslashes($string, '"\\/');
     }
 
     /**
@@ -186,7 +199,8 @@ class Data extends AbstractHelper
      */
     public function checkMetaData(object $object, string $type): void
     {
-        if (!method_exists($object, 'getMetaTitle') || !method_exists($object, 'setMetaTitle')) {
+        // Use is_callable instead of method_exists to handle Interceptor classes
+        if (!is_callable([$object, 'getMetaTitle']) || !is_callable([$object, 'setMetaTitle'])) {
             $this->logger->warning(
                 'FlipDev_Seo: Object does not support meta data',
                 ['class' => get_class($object)]
@@ -207,14 +221,21 @@ class Data extends AbstractHelper
      */
     private function setDefaultMetaTitle(object $object, string $type): void
     {
-        if (empty($object->getMetaTitle()) && 
-            $this->getConfig("flipdevseo/metadata/{$type}_title_enabled")) {
-            
-            $template = $this->getConfig("flipdevseo/metadata/{$type}_title");
+        if (empty($object->getMetaTitle()) &&
+            $this->getConfig("flipdev_seo/metadata/{$type}_title_enabled")) {
+
+            $template = $this->getConfig("flipdev_seo/metadata/{$type}_title");
             if ($template) {
                 $metaTitle = $this->shortcode($template, $object);
+
+                // Clean the meta title: remove HTML tags, normalize whitespace
+                $metaTitle = strip_tags($metaTitle);
+                $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
+                $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
+                $metaTitle = trim($metaTitle);
+
                 $object->setMetaTitle($metaTitle);
-                
+
                 $this->logger->debug(
                     'FlipDev_Seo: Set default meta title',
                     ['type' => $type, 'title' => $metaTitle]
@@ -232,14 +253,21 @@ class Data extends AbstractHelper
      */
     private function setDefaultMetaDescription(object $object, string $type): void
     {
-        if (empty($object->getMetaDescription()) && 
-            $this->getConfig("flipdevseo/metadata/{$type}_metadesc_enabled")) {
-            
-            $template = $this->getConfig("flipdevseo/metadata/{$type}_metadesc");
+        if (empty($object->getMetaDescription()) &&
+            $this->getConfig("flipdev_seo/metadata/{$type}_metadesc_enabled")) {
+
+            $template = $this->getConfig("flipdev_seo/metadata/{$type}_metadesc");
             if ($template) {
                 $metaDescription = $this->shortcode($template, $object);
+
+                // Clean the meta description: remove HTML tags, normalize whitespace
+                $metaDescription = strip_tags($metaDescription);
+                $metaDescription = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaDescription);
+                $metaDescription = preg_replace('/\s+/', ' ', $metaDescription);
+                $metaDescription = trim($metaDescription);
+
                 $object->setMetaDescription($metaDescription);
-                
+
                 $this->logger->debug(
                     'FlipDev_Seo: Set default meta description',
                     ['type' => $type, 'length' => strlen($metaDescription)]

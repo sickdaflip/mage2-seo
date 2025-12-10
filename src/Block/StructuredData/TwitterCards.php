@@ -44,7 +44,7 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \FlipDev\Seo\Helper\Data $foxSeoHelper
+     * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Bundle\Model\Product\Price $bundlePrice
      * @param PriceCurrencyInterface $priceCurrency
@@ -52,14 +52,14 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \FlipDev\Seo\Helper\Data $foxSeoHelper,
+        \FlipDev\Seo\Helper\Data $flipDevSeoHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Bundle\Model\Product\Price $bundlePrice,
         PriceCurrencyInterface $priceCurrency,
         array $data = []
     )
     {
-        $this->helper = $foxSeoHelper;
+        $this->helper = $flipDevSeoHelper;
         $this->_coreRegistry = $registry;
         $this->_bundlePrice = $bundlePrice;
         $this->_priceCurrency = $priceCurrency;
@@ -84,7 +84,7 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
 
     public function getConfig(string $configPath): ?string
     {
-        return $this->helper->getConfig($configpath);
+        return $this->helper->getConfig($configPath);
     }
 
     public function getStartingPrice($product)
@@ -98,5 +98,19 @@ class TwitterCards extends \Magento\Framework\View\Element\Template
 
         return $this->_priceCurrency->format($price, false);
 
+    }
+
+    /**
+     * Get product image URL
+     *
+     * @param \Magento\Catalog\Model\Product $product
+     * @return string
+     */
+    public function getProductImageUrl($product)
+    {
+        $imageHelper = \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Magento\Catalog\Helper\Image::class);
+
+        return $imageHelper->init($product, 'product_page_image_large')->getUrl();
     }
 }

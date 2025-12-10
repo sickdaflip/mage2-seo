@@ -55,13 +55,42 @@ class DefaultProductMeta implements ObserverInterface
     {
         try {
             $product = $observer->getEvent()->getProduct();
-            
+
             if (!$product) {
                 return;
             }
 
+            // Clean existing meta description if set
+            if (!empty($product->getMetaDescription())) {
+                $metaDesc = $product->getMetaDescription();
+                $metaDesc = strip_tags($metaDesc);
+                $metaDesc = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaDesc);
+                $metaDesc = preg_replace('/\s+/', ' ', $metaDesc);
+                $metaDesc = trim($metaDesc);
+                $product->setMetaDescription($metaDesc);
+            }
+
+            // Clean existing meta title if set
+            if (!empty($product->getMetaTitle())) {
+                $metaTitle = $product->getMetaTitle();
+                $metaTitle = strip_tags($metaTitle);
+                $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
+                $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
+                $metaTitle = trim($metaTitle);
+                $product->setMetaTitle($metaTitle);
+            }
+
+            // Set default meta data if not set
             $this->seoHelper->checkMetaData($product, 'product');
-            
+
+            // Apply meta data to page config
+            if ($product->getMetaTitle()) {
+                $this->pageConfig->setMetaTitle($product->getMetaTitle());
+            }
+            if ($product->getMetaDescription()) {
+                $this->pageConfig->setDescription($product->getMetaDescription());
+            }
+
             $robots = $product->getData('flipdevseo_metarobots');
             if ($robots) {
                 $this->pageConfig->setRobots($robots);

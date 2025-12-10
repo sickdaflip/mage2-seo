@@ -62,7 +62,7 @@ class SetCategoryMetaRobots implements ObserverInterface
 
             $requestUrl = $request->getRequestUri();
             
-            if ($this->seoHelper->getConfig('flipdevseo/settings/noindexparams') && 
+            if ($this->seoHelper->getConfig('flipdev_seo/settings/noindexparams') && 
                 stristr($requestUrl, '?')) {
                 
                 $this->pageConfig->setRobots('NOINDEX,FOLLOW');

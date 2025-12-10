@@ -1,12 +1,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="flipdevseo" translate="label" sortOrder="200">
-            <label>FlipDev SEO</label>
-        </tab>
-        <section id="flipdevseo" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1"
+        <section id="flipdev_seo" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1"
                  showInStore="1">
-            <label>SEO Settings</label>
-            <tab>flipdevseo</tab>
+            <label>SEO</label>
+            <tab>flipdev</tab>
             <resource>FlipDev_Seo::settings</resource>
 
             <!--
@@ -248,23 +245,10 @@
                 </field>
                 <field id="social_profiles" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Social Profiles</label>
-                    <comment><![CDATA[Add the full URLs to your social profiles (e.g. http://twitter.com/magentofox) - ONE per line!]]></comment>
+                    <comment><![CDATA[Add the full URLs to your social profiles (e.g. https://twitter.com/yourcompany, https://facebook.com/yourcompany) - ONE per line!]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
-                </field>
-            </group>
-
-            <!--
-                Breadcrumbs Structured Data
-            -->
-
-            <group id="breadcrumbs_sd" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1"
-                   showInStore="1">
-                <label>Breadcrumbs Structured Data</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Breadcrumbs Structured Data?</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
 
@@ -319,24 +303,6 @@
                 <field id="cms" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>CMS Page Tracking Code</label>
                     <comment><![CDATA[E.g. ga('set', 'contentGroup1', 'CMS Page'); ]]></comment>
-                </field>
-            </group>
-
-            <!--
-                Google Sitelink Search
-            -->
-
-            <group id="google_sitelink_search" translate="label" type="text" sortOrder="120" showInDefault="1" showInWebsite="1"
-                   showInStore="1">
-                <label>Google Sitelink Search</label>
-                <comment>
-                    <![CDATA[
-                            <p>If you enable Sitelink Search you will provide Google with structured data about the search form on your website. For more information go here: <a href="https://developers.google.com/structured-data/slsb-overview" target="_blank">https://developers.google.com/structured-data/slsb-overview</a></p>
-                        ]]>
-                </comment>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Enable Sitelink Search?</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
 

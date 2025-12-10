@@ -1,4 +1,9 @@
 <?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\TrustedStores $block */
+?>
+<?php
 $_order = $block->getOrder();
 $_items = $_order->getAllVisibleItems();
 $_gtsCountry = $block->getGtsConfig('google_shopping_country');

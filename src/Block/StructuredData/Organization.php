@@ -42,7 +42,6 @@ class Organization extends \FlipDev\Seo\Block\Template
      */
     public function getSocialProfiles()
     {
-        return array_filter(explode("\n", $this->helper->getConfig
-        ('flipdevseo/social_sd/social_profiles')));
+        return array_filter(explode("\n", $this->helper->getConfig('flipdev_seo/social_sd/social_profiles') ?? ''));
     }
 }

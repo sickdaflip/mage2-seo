@@ -42,7 +42,7 @@ class TrustedStores extends \Magento\Framework\View\Element\Template
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \FlipDev\Seo\Helper\Data $foxSeoHelper
+     * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
      * @param \Magento\Sales\Model\OrderFactory $orderFactory
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Checkout\Model\Session $checkoutSession
@@ -50,14 +50,14 @@ class TrustedStores extends \Magento\Framework\View\Element\Template
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \FlipDev\Seo\Helper\Data $foxSeoHelper,
+        \FlipDev\Seo\Helper\Data $flipDevSeoHelper,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Magento\Framework\Registry $registry,
         \Magento\Checkout\Model\Session $checkoutSession,
         array $data = []
     )
     {
-        $this->helper = $foxSeoHelper;
+        $this->helper = $flipDevSeoHelper;
         $this->_orderFactory = $orderFactory;
         $this->_coreRegistry = $registry;
         $this->_checkoutSession = $checkoutSession;
@@ -65,12 +65,12 @@ class TrustedStores extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * @param $configpath
-     * @return mixed
+     * @param string $configPath
+     * @return string|null
      */
     public function getConfig(string $configPath): ?string
     {
-        return $this->helper->getConfig($configpath);
+        return $this->helper->getConfig($configPath);
     }
 
     /**
@@ -79,7 +79,7 @@ class TrustedStores extends \Magento\Framework\View\Element\Template
      */
     public function getGtsConfig($configpath)
     {
-        return $this->helper->getConfig('flipdevseo/google_trusted_store/'.$configpath);
+        return $this->helper->getConfig('flipdev_seo/google_trusted_store/'.$configpath);
     }
 
     /**
