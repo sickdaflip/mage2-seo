@@ -80,6 +80,25 @@ class DefaultCmsPageMeta implements ObserverInterface
                 $page->setMetaTitle($metaTitle);
             }
 
+            // Set default meta title if not set
+            if (empty($page->getMetaTitle()) &&
+                $this->seoHelper->getConfig('flipdev_seo/metadata/cms_title_enabled')) {
+
+                $template = $this->seoHelper->getConfig('flipdev_seo/metadata/cms_title');
+                if ($template) {
+                    $metaTitle = str_replace('[title]', $page->getTitle(), $template);
+                    $metaTitle = str_replace('[store]', $this->seoHelper->getConfig('general/store_information/name'), $metaTitle);
+
+                    // Clean the meta title
+                    $metaTitle = strip_tags($metaTitle);
+                    $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
+                    $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
+                    $metaTitle = trim($metaTitle);
+
+                    $page->setMetaTitle($metaTitle);
+                }
+            }
+
             // Set default meta description if not set
             if (empty($page->getMetaDescription()) &&
                 $this->seoHelper->getConfig('flipdev_seo/metadata/cms_metadesc_enabled')) {

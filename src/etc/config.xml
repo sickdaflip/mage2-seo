@@ -24,6 +24,8 @@
                 <category_title>[original_name] - [store]</category_title>
                 <category_metadesc_enabled>0</category_metadesc_enabled>
                 <category_metadesc>[original_name] [store]</category_metadesc>
+                <cms_title_enabled>0</cms_title_enabled>
+                <cms_title>[title] - [store]</cms_title>
                 <cms_metadesc_enabled>0</cms_metadesc_enabled>
                 <cms_metadesc>[title] - [store]</cms_metadesc>
             </metadata>

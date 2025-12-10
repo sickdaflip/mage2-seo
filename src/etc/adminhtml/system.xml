@@ -155,6 +155,22 @@
                         <field id="category_metadesc_enabled">1</field>
                     </depends>
                 </field>
+                <field id="cms_title_enabled" translate="label" type="select" sortOrder="85" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Default CMS Title?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="cms_title" translate="label" type="text" sortOrder="87" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default CMS Title</label>
+                    <comment><![CDATA[
+                                <small>[title] = CMS Page Name<br />
+                                [store] = Store Name<br />
+                                <strong>For example: [title] - [store].</strong></small>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="cms_title_enabled">1</field>
+                    </depends>
+                </field>
                 <field id="cms_metadesc_enabled" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Default CMS Meta Description?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
