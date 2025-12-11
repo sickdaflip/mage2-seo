@@ -1,10 +1,11 @@
-<?xml version="1.0"?>
-<!--
-    MINIMAL catalog_category_view.xml to avoid Hyvä conflicts
--->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- All layout blocks removed to avoid Hyvä Theme conflicts -->
+        <referenceBlock name="footer">
+            <block class="FlipDev\Seo\Block\Template" name="flipdevseo.content.grouping" template="FlipDev_Seo::google/content-grouping.phtml" ifconfig="flipdev_seo/google_content_grouping/category">
+                <action method="setType">
+                    <argument name="name" xsi:type="string">category</argument>
+                </action>
+            </block>
+        </referenceBlock>
     </body>
 </page>
