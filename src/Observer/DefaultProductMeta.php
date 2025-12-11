@@ -53,62 +53,99 @@ class DefaultProductMeta implements ObserverInterface
      */
     public function execute(Observer $observer): void
     {
+        // ULTRA-SAFE version that catches EVERYTHING and never breaks the page
         try {
             $product = $observer->getEvent()->getProduct();
 
-            if (!$product) {
+            if (!$product || !is_object($product)) {
                 return;
             }
 
-            // Clean existing meta description if set
-            if (!empty($product->getMetaDescription())) {
-                $metaDesc = $product->getMetaDescription();
-                $metaDesc = strip_tags($metaDesc);
-                $metaDesc = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaDesc);
-                $metaDesc = preg_replace('/\s+/', ' ', $metaDesc);
-                $metaDesc = trim($metaDesc);
-                $product->setMetaDescription($metaDesc);
+            // Wrap EVERY operation in its own try-catch to isolate failures
+
+            // Step 1: Clean meta description
+            try {
+                if (!empty($product->getMetaDescription())) {
+                    $metaDesc = $product->getMetaDescription();
+                    $metaDesc = strip_tags($metaDesc);
+                    $metaDesc = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaDesc);
+                    $metaDesc = preg_replace('/\s+/', ' ', $metaDesc);
+                    $metaDesc = trim($metaDesc);
+                    $product->setMetaDescription($metaDesc);
+                }
+            } catch (\Throwable $e) {
+                $this->logger->debug('FlipDev_Seo: Could not clean meta description', [
+                    'error' => $e->getMessage()
+                ]);
             }
 
-            // Clean existing meta title if set
-            if (!empty($product->getMetaTitle())) {
-                $metaTitle = $product->getMetaTitle();
-                $metaTitle = strip_tags($metaTitle);
-                $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
-                $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
-                $metaTitle = trim($metaTitle);
-                $product->setMetaTitle($metaTitle);
+            // Step 2: Clean meta title
+            try {
+                if (!empty($product->getMetaTitle())) {
+                    $metaTitle = $product->getMetaTitle();
+                    $metaTitle = strip_tags($metaTitle);
+                    $metaTitle = str_replace(["\r\n", "\r", "\n", "\t"], ' ', $metaTitle);
+                    $metaTitle = preg_replace('/\s+/', ' ', $metaTitle);
+                    $metaTitle = trim($metaTitle);
+                    $product->setMetaTitle($metaTitle);
+                }
+            } catch (\Throwable $e) {
+                $this->logger->debug('FlipDev_Seo: Could not clean meta title', [
+                    'error' => $e->getMessage()
+                ]);
             }
 
-            // Set default meta data if not set
-            $this->seoHelper->checkMetaData($product, 'product');
-
-            // Apply meta data to page config
-            if ($product->getMetaTitle()) {
-                $this->pageConfig->setMetaTitle($product->getMetaTitle());
+            // Step 3: Set default meta data (MOST LIKELY TO FAIL)
+            try {
+                $this->seoHelper->checkMetaData($product, 'product');
+            } catch (\Throwable $e) {
+                $this->logger->debug('FlipDev_Seo: checkMetaData failed', [
+                    'error' => $e->getMessage()
+                ]);
+                // Continue anyway - this is optional
             }
-            if ($product->getMetaDescription()) {
-                $this->pageConfig->setDescription($product->getMetaDescription());
+
+            // Step 4: Apply to page config (POTENTIAL COMPATIBILITY ISSUE)
+            try {
+                if ($product->getMetaTitle()) {
+                    $this->pageConfig->setMetaTitle($product->getMetaTitle());
+                }
+            } catch (\Throwable $e) {
+                $this->logger->debug('FlipDev_Seo: Could not set page meta title', [
+                    'error' => $e->getMessage()
+                ]);
             }
 
-            // Only try to set robots meta if the attribute exists
+            try {
+                if ($product->getMetaDescription()) {
+                    $this->pageConfig->setDescription($product->getMetaDescription());
+                }
+            } catch (\Throwable $e) {
+                $this->logger->debug('FlipDev_Seo: Could not set page description', [
+                    'error' => $e->getMessage()
+                ]);
+            }
+
+            // Step 5: Set robots meta (OPTIONAL - ATTRIBUTE MAY NOT EXIST)
             try {
                 $robots = $product->getData('flipdevseo_metarobots');
                 if ($robots && is_string($robots) && !empty(trim($robots))) {
                     $this->pageConfig->setRobots($robots);
                 }
-            } catch (\Exception $robotsException) {
-                // Attribute doesn't exist or can't be accessed - ignore silently
-                $this->logger->debug('FlipDev_Seo: flipdevseo_metarobots attribute not available', [
-                    'product_id' => $product->getId()
+            } catch (\Throwable $e) {
+                $this->logger->debug('FlipDev_Seo: Could not set robots meta', [
+                    'error' => $e->getMessage()
                 ]);
             }
-        } catch (\Exception $e) {
-            $this->logger->error('FlipDev_Seo: Product meta data failed', [
+
+        } catch (\Throwable $e) {
+            // ULTIMATE FAILSAFE - Log but NEVER throw
+            $this->logger->error('FlipDev_Seo: DefaultProductMeta completely failed', [
                 'exception' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            // Don't re-throw - fail silently to avoid breaking the page
+            // Absolutely do not throw - just return
+            return;
         }
     }
 }
