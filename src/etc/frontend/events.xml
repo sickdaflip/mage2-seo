@@ -61,13 +61,21 @@
     </event>
 
     <!--
-        DefaultProductMeta - Fixed and re-enabled
+        DefaultProductMeta - DISABLED due to Hyvä Theme incompatibility
 
-        Fixed the bug with flipdevseo_metarobots attribute causing crashes.
-        Now wrapped in try-catch with proper validation.
+        Calling pageConfig->setMetaTitle() triggers layout generation
+        which causes conflict: "header-content already has a child with alias 'compare'"
+
+        This is a known Hyvä Theme issue with pageConfig modifications
+        during the catalog_controller_product_init_after event.
+
+        Alternative: Meta titles/descriptions should be set via layout XML
+        or later events that don't trigger early layout generation.
     -->
 
+    <!-- DISABLED: Causes Hyvä layout conflicts
     <event name="catalog_controller_product_init_after">
         <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
     </event>
+    -->
 </config>
