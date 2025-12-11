@@ -61,7 +61,13 @@
     </event>
 
     <!--
-        STILL DISABLED - will test next:
-        - catalog_controller_product_init_after (DefaultProductMeta)
+        STEP 5: Testing DefaultProductMeta observer (THE CULPRIT?)
+
+        This is the last remaining observer. If products break with this enabled,
+        we've found the problem!
     -->
+
+    <event name="catalog_controller_product_init_after">
+        <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
+    </event>
 </config>
