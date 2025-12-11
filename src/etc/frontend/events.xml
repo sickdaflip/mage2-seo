@@ -1,40 +1,13 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <!--
-        Removed event: controller_action_predispatch_catalog_product_view
+        ALL OBSERVERS TEMPORARILY DISABLED FOR DEBUGGING
 
-        Previously contained observers that caused critical issues:
-        - DiscontinuedProductCheck: Requires custom attribute that may not exist
-        - CanonicalProductRedirect: Has bug causing infinite redirect loop
-          Bug: compares full URL (https://example.com/product.html) with URI (/product.html) - never matches!
+        If products/categories work with this file, re-enable observers one by one
+        to find which one is causing the issue.
     -->
 
-    <event name="controller_action_predispatch_catalog_category_view">
-        <!-- Removed: DiscontinuedCategoryCheck - requires custom logic that may not be needed -->
-        <observer name="category.noindex" instance="FlipDev\Seo\Observer\SetCategoryMetaRobots" />
-    </event>
-    <event name="controller_action_layout_render_before_catalogsearch_advanced_result">
-        <observer name="advancedsearch.noindex" instance="FlipDev\Seo\Observer\SetAdvancedSearchMetaRobots" />
-    </event>
-    <event name="controller_action_layout_render_before_catalogsearch_result_index">
-        <observer name="search.noindex" instance="FlipDev\Seo\Observer\SetSearchMetaRobots" />
-    </event>
-    <event name="controller_action_layout_render_before_contact_index_index">
-        <observer name="contact.meta" instance="FlipDev\Seo\Observer\SetContactMetaDescTitle" />
-    </event>
+    <!-- Dummy event with dummy observer to keep XML schema happy -->
     <event name="controller_action_postdispatch">
-        <observer name="remove.meta.keywords" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" />
-    </event>
-    <event name="catalog_controller_product_init_after">
-        <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
-    </event>
-    <event name="catalog_controller_category_init_after">
-        <observer name="seo.heading" instance="FlipDev\Seo\Observer\CategorySeoHeading" />
-        <observer name="default.category.meta" instance="FlipDev\Seo\Observer\DefaultCategoryMeta" />
-    </event>
-    <event name="controller_action_layout_render_before_catalog_category_view">
-        <observer name="fix.pagination.canonical" instance="FlipDev\Seo\Observer\FixPaginationCanonical" />
-    </event>
-    <event name="cms_page_render">
-        <observer name="default.cms.meta" instance="FlipDev\Seo\Observer\DefaultCmsPageMeta" />
+        <observer name="dummy.observer" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" disabled="true" />
     </event>
 </config>
