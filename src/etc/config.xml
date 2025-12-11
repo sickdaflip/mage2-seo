@@ -41,9 +41,6 @@
             <logo_sd>
                 <enabled>1</enabled>
             </logo_sd>
-            <google_tag_manager>
-                <enabled>0</enabled>
-            </google_tag_manager>
             <google_content_grouping>
                 <enabled>0</enabled>
             </google_content_grouping>

@@ -189,20 +189,6 @@ interface ConfigInterface
     public function getSocialProfiles(): array;
 
     /**
-     * Check if Google Tag Manager is enabled
-     *
-     * @return bool
-     */
-    public function isGoogleTagManagerEnabled(): bool;
-
-    /**
-     * Get Google Tag Manager ID
-     *
-     * @return string|null
-     */
-    public function getGoogleTagManagerId(): ?string;
-
-    /**
      * Check if Google Trusted Store is enabled
      *
      * @return bool

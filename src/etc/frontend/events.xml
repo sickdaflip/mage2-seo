@@ -1,35 +1,81 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="controller_action_predispatch_catalog_product_view">
-        <observer name="discontinued.product" instance="FlipDev\Seo\Observer\DiscontinuedProductCheck" />
-        <observer name="canonical.redirect" instance="FlipDev\Seo\Observer\CanonicalProductRedirect" />
-    </event>
-    <event name="controller_action_predispatch_catalog_category_view">
-        <observer name="discontinued.category" instance="FlipDev\Seo\Observer\DiscontinuedCategoryCheck" />
-        <observer name="category.noindex" instance="FlipDev\Seo\Observer\SetCategoryMetaRobots" />
-    </event>
+    <!--
+        STEP 1: Re-enabling SAFE observers (don't touch products/categories)
+
+        These observers only work on search, contact, and CMS pages.
+        They should NOT affect product or category pages at all.
+    -->
+
+    <!-- Search pages only -->
     <event name="controller_action_layout_render_before_catalogsearch_advanced_result">
         <observer name="advancedsearch.noindex" instance="FlipDev\Seo\Observer\SetAdvancedSearchMetaRobots" />
     </event>
     <event name="controller_action_layout_render_before_catalogsearch_result_index">
         <observer name="search.noindex" instance="FlipDev\Seo\Observer\SetSearchMetaRobots" />
     </event>
+
+    <!-- Contact page only -->
     <event name="controller_action_layout_render_before_contact_index_index">
         <observer name="contact.meta" instance="FlipDev\Seo\Observer\SetContactMetaDescTitle" />
     </event>
-    <event name="controller_action_postdispatch">
-        <observer name="remove.meta.keywords" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" />
-    </event>
-    <event name="catalog_controller_product_init_after">
-        <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
-    </event>
-    <event name="catalog_controller_category_init_after">
-        <observer name="seo.heading" instance="FlipDev\Seo\Observer\CategorySeoHeading" />
-        <observer name="default.category.meta" instance="FlipDev\Seo\Observer\DefaultCategoryMeta" />
-    </event>
-    <event name="controller_action_layout_render_before_catalog_category_view">
-        <observer name="fix.pagination.canonical" instance="FlipDev\Seo\Observer\FixPaginationCanonical" />
-    </event>
+
+    <!-- CMS pages only -->
     <event name="cms_page_render">
         <observer name="default.cms.meta" instance="FlipDev\Seo\Observer\DefaultCmsPageMeta" />
     </event>
+
+    <!-- Global but only removes meta keywords - harmless -->
+    <event name="controller_action_postdispatch">
+        <observer name="remove.meta.keywords" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" />
+    </event>
+
+    <!--
+        STEP 2: Testing category-specific observers (least invasive first)
+
+        Starting with observers that only affect specific category scenarios:
+        - FixPaginationCanonical: Only for paginated categories
+        - SetCategoryMetaRobots: Only for filtered/sorted categories
+    -->
+
+    <!-- Only affects paginated category pages -->
+    <event name="controller_action_layout_render_before_catalog_category_view">
+        <observer name="fix.pagination.canonical" instance="FlipDev\Seo\Observer\FixPaginationCanonical" />
+    </event>
+
+    <!-- Only affects filtered/sorted category pages -->
+    <event name="controller_action_predispatch_catalog_category_view">
+        <observer name="category.noindex" instance="FlipDev\Seo\Observer\SetCategoryMetaRobots" />
+    </event>
+
+    <!--
+        STEP 3: Testing CategorySeoHeading observer
+
+        This observer only changes the H1 heading if a custom heading is set.
+        Should be relatively harmless.
+    -->
+
+    <event name="catalog_controller_category_init_after">
+        <observer name="seo.heading" instance="FlipDev\Seo\Observer\CategorySeoHeading" />
+        <!-- STEP 4: Testing DefaultCategoryMeta observer -->
+        <observer name="default.category.meta" instance="FlipDev\Seo\Observer\DefaultCategoryMeta" />
+    </event>
+
+    <!--
+        DefaultProductMeta - DISABLED due to Hyvä Theme incompatibility
+
+        Calling pageConfig->setMetaTitle() triggers layout generation
+        which causes conflict: "header-content already has a child with alias 'compare'"
+
+        This is a known Hyvä Theme issue with pageConfig modifications
+        during the catalog_controller_product_init_after event.
+
+        Alternative: Meta titles/descriptions should be set via layout XML
+        or later events that don't trigger early layout generation.
+    -->
+
+    <!-- DISABLED: Causes Hyvä layout conflicts
+    <event name="catalog_controller_product_init_after">
+        <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
+    </event>
+    -->
 </config>
