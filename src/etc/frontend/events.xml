@@ -1,10 +1,15 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="controller_action_predispatch_catalog_product_view">
-        <observer name="discontinued.product" instance="FlipDev\Seo\Observer\DiscontinuedProductCheck" />
-        <observer name="canonical.redirect" instance="FlipDev\Seo\Observer\CanonicalProductRedirect" />
-    </event>
+    <!--
+        Removed event: controller_action_predispatch_catalog_product_view
+
+        Previously contained observers that caused critical issues:
+        - DiscontinuedProductCheck: Requires custom attribute that may not exist
+        - CanonicalProductRedirect: Has bug causing infinite redirect loop
+          Bug: compares full URL (https://example.com/product.html) with URI (/product.html) - never matches!
+    -->
+
     <event name="controller_action_predispatch_catalog_category_view">
-        <observer name="discontinued.category" instance="FlipDev\Seo\Observer\DiscontinuedCategoryCheck" />
+        <!-- Removed: DiscontinuedCategoryCheck - requires custom logic that may not be needed -->
         <observer name="category.noindex" instance="FlipDev\Seo\Observer\SetCategoryMetaRobots" />
     </event>
     <event name="controller_action_layout_render_before_catalogsearch_advanced_result">
