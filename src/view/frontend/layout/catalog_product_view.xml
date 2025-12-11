@@ -1,17 +1,10 @@
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<?xml version="1.0"?>
+<!--
+    MINIMAL catalog_product_view.xml to avoid Hyvä conflicts
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="head.additional">
-            <block class="FlipDev\Seo\Block\StructuredData\TwitterCards" name="flipdevseo.twittercards" template="FlipDev_Seo::structureddata/twittercards.phtml" ifconfig="flipdev_seo/twittercards/enabled" />
-        </referenceBlock>
-        <referenceBlock name="footer">
-            <block class="FlipDev\Seo\Block\Template" name="flipdevseo.content.grouping" template="FlipDev_Seo::google/content-grouping.phtml" ifconfig="flipdev_seo/google_content_grouping/product">
-                <action method="setType">
-                    <argument name="name" xsi:type="string">product</argument>
-                </action>
-            </block>
-        </referenceBlock>
-        <referenceBlock name="flipdevseo.gts">
-            <block class="FlipDev\Seo\Block\TrustedStores" name="flipdevseo.gts.product" template="FlipDev_Seo::google/trustedstore/product.phtml" ifconfig="flipdev_seo/google_trusted_store/product_enabled" />
-        </referenceBlock>
+        <!-- All layout blocks removed to avoid Hyvä Theme conflicts -->
     </body>
 </page>

@@ -1,21 +1,14 @@
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<?xml version="1.0"?>
+<!--
+    MINIMAL default.xml to avoid Hyvä conflicts
+
+    Removed all block references that cause conflicts with Hyvä Theme.
+    The SEO functionality will work through observers only.
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="head.additional">
-            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd"
-                   template="FlipDev_Seo::structureddata/js.phtml" before="-">
-                <block class="FlipDev\Seo\Block\StructuredData\Organization" name="flipdevseo.sd.organization" template="FlipDev_Seo::structureddata/organization.phtml" ifconfig="flipdev_seo/organization_sd/enabled" />
-            </block>
-        </referenceBlock>
-        <referenceBlock name="footer_links">
-            <block class="Magento\Framework\View\Element\Html\Link\Current" name="sitemap-link">
-                <arguments>
-                    <argument name="label" xsi:type="string">Sitemap</argument>
-                    <argument name="path" xsi:type="string">sitemap</argument>
-                </arguments>
-            </block>
-        </referenceBlock>
-        <referenceBlock name="before.body.end">
-            <block class="FlipDev\Seo\Block\TrustedStores" name="flipdevseo.gts" template="FlipDev_Seo::google/trusted-store.phtml" ifconfig="flipdev_seo/google_trusted_store/enabled" />
-        </referenceBlock>
+        <!-- All layout blocks removed to avoid Hyvä Theme conflicts -->
+        <!-- SEO meta tags are handled by observers instead -->
     </body>
 </page>
