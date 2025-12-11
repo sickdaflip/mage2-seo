@@ -91,14 +91,24 @@ class DefaultProductMeta implements ObserverInterface
                 $this->pageConfig->setDescription($product->getMetaDescription());
             }
 
-            $robots = $product->getData('flipdevseo_metarobots');
-            if ($robots) {
-                $this->pageConfig->setRobots($robots);
+            // Only try to set robots meta if the attribute exists
+            try {
+                $robots = $product->getData('flipdevseo_metarobots');
+                if ($robots && is_string($robots) && !empty(trim($robots))) {
+                    $this->pageConfig->setRobots($robots);
+                }
+            } catch (\Exception $robotsException) {
+                // Attribute doesn't exist or can't be accessed - ignore silently
+                $this->logger->debug('FlipDev_Seo: flipdevseo_metarobots attribute not available', [
+                    'product_id' => $product->getId()
+                ]);
             }
         } catch (\Exception $e) {
             $this->logger->error('FlipDev_Seo: Product meta data failed', [
-                'exception' => $e->getMessage()
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
+            // Don't re-throw - fail silently to avoid breaking the page
         }
     }
 }

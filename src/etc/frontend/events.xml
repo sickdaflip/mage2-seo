@@ -61,17 +61,13 @@
     </event>
 
     <!--
-        DefaultProductMeta CONFIRMED AS THE CULPRIT!
+        DefaultProductMeta - Fixed and re-enabled
 
-        This observer breaks product pages completely.
-        Disabled until the bug is fixed.
-
-        TODO: Fix the bug in DefaultProductMeta and re-enable
+        Fixed the bug with flipdevseo_metarobots attribute causing crashes.
+        Now wrapped in try-catch with proper validation.
     -->
 
-    <!-- DISABLED: Breaks products
     <event name="catalog_controller_product_init_after">
         <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
     </event>
-    -->
 </config>
