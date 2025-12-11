@@ -30,12 +30,26 @@
     </event>
 
     <!--
-        PRODUCT/CATEGORY OBSERVERS STILL DISABLED
+        STEP 2: Testing category-specific observers (least invasive first)
 
-        These are still commented out - will test them next if above work:
+        Starting with observers that only affect specific category scenarios:
+        - FixPaginationCanonical: Only for paginated categories
+        - SetCategoryMetaRobots: Only for filtered/sorted categories
+    -->
+
+    <!-- Only affects paginated category pages -->
+    <event name="controller_action_layout_render_before_catalog_category_view">
+        <observer name="fix.pagination.canonical" instance="FlipDev\Seo\Observer\FixPaginationCanonical" />
+    </event>
+
+    <!-- Only affects filtered/sorted category pages -->
+    <event name="controller_action_predispatch_catalog_category_view">
+        <observer name="category.noindex" instance="FlipDev\Seo\Observer\SetCategoryMetaRobots" />
+    </event>
+
+    <!--
+        STILL DISABLED - will test next if above work:
         - catalog_controller_product_init_after (DefaultProductMeta)
         - catalog_controller_category_init_after (CategorySeoHeading, DefaultCategoryMeta)
-        - controller_action_predispatch_catalog_category_view (SetCategoryMetaRobots)
-        - controller_action_layout_render_before_catalog_category_view (FixPaginationCanonical)
     -->
 </config>
