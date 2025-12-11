@@ -1,13 +1,41 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <!--
-        ALL OBSERVERS TEMPORARILY DISABLED FOR DEBUGGING
+        STEP 1: Re-enabling SAFE observers (don't touch products/categories)
 
-        If products/categories work with this file, re-enable observers one by one
-        to find which one is causing the issue.
+        These observers only work on search, contact, and CMS pages.
+        They should NOT affect product or category pages at all.
     -->
 
-    <!-- Dummy event with dummy observer to keep XML schema happy -->
-    <event name="controller_action_postdispatch">
-        <observer name="dummy.observer" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" disabled="true" />
+    <!-- Search pages only -->
+    <event name="controller_action_layout_render_before_catalogsearch_advanced_result">
+        <observer name="advancedsearch.noindex" instance="FlipDev\Seo\Observer\SetAdvancedSearchMetaRobots" />
     </event>
+    <event name="controller_action_layout_render_before_catalogsearch_result_index">
+        <observer name="search.noindex" instance="FlipDev\Seo\Observer\SetSearchMetaRobots" />
+    </event>
+
+    <!-- Contact page only -->
+    <event name="controller_action_layout_render_before_contact_index_index">
+        <observer name="contact.meta" instance="FlipDev\Seo\Observer\SetContactMetaDescTitle" />
+    </event>
+
+    <!-- CMS pages only -->
+    <event name="cms_page_render">
+        <observer name="default.cms.meta" instance="FlipDev\Seo\Observer\DefaultCmsPageMeta" />
+    </event>
+
+    <!-- Global but only removes meta keywords - harmless -->
+    <event name="controller_action_postdispatch">
+        <observer name="remove.meta.keywords" instance="FlipDev\Seo\Observer\RemoveMetaKeywords" />
+    </event>
+
+    <!--
+        PRODUCT/CATEGORY OBSERVERS STILL DISABLED
+
+        These are still commented out - will test them next if above work:
+        - catalog_controller_product_init_after (DefaultProductMeta)
+        - catalog_controller_category_init_after (CategorySeoHeading, DefaultCategoryMeta)
+        - controller_action_predispatch_catalog_category_view (SetCategoryMetaRobots)
+        - controller_action_layout_render_before_catalog_category_view (FixPaginationCanonical)
+    -->
 </config>
