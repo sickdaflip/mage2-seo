@@ -61,13 +61,17 @@
     </event>
 
     <!--
-        STEP 5: Testing DefaultProductMeta observer (THE CULPRIT?)
+        DefaultProductMeta CONFIRMED AS THE CULPRIT!
 
-        This is the last remaining observer. If products break with this enabled,
-        we've found the problem!
+        This observer breaks product pages completely.
+        Disabled until the bug is fixed.
+
+        TODO: Fix the bug in DefaultProductMeta and re-enable
     -->
 
+    <!-- DISABLED: Breaks products
     <event name="catalog_controller_product_init_after">
         <observer name="default.product.meta" instance="FlipDev\Seo\Observer\DefaultProductMeta" />
     </event>
+    -->
 </config>
