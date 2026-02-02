@@ -134,6 +134,70 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="shipping_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Shipping Details?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="shipping_rate" translate="label" type="text" sortOrder="82" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default Shipping Rate</label>
+                    <comment><![CDATA[Default shipping cost (e.g., 5.99). Leave empty if free shipping.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="shipping_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="shipping_days" translate="label" type="text" sortOrder="84" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Shipping Transit Days</label>
+                    <comment><![CDATA[E.g., "3-5" for 3-5 business days, or "2" for 2 days.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="shipping_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="shipping_country" translate="label" type="select" sortOrder="86" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Shipping Destination Country</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <comment><![CDATA[Leave empty to use default country.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="shipping_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="return_enabled" translate="label" type="select" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Return Policy?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="return_days" translate="label" type="text" sortOrder="92" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Return Window (Days)</label>
+                    <comment><![CDATA[Number of days for returns (default: 14)]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="return_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="return_fees" translate="label" type="select" sortOrder="94" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Return Fees</label>
+                    <source_model>FlipDev\Seo\Model\Source\ReturnFees</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="return_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="return_country" translate="label" type="select" sortOrder="96" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Return Policy Country</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <comment><![CDATA[Leave empty to use default country.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="return_enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <!--
@@ -325,6 +389,213 @@
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
+                </field>
+            </group>
+
+            <!--
+                Breadcrumb Structured Data
+            -->
+
+            <group id="breadcrumbs_sd" translate="label" type="text" sortOrder="72" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Breadcrumb Structured Data</label>
+                <comment>
+                    <![CDATA[<p>Add <a href="https://schema.org/BreadcrumbList" target="_blank">Breadcrumb Structured Data</a> (JSON-LD) to product and category pages for better search result appearance.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Breadcrumb Structured Data?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+
+            <!--
+                WebSite Structured Data
+            -->
+
+            <group id="website_sd" translate="label" type="text" sortOrder="74" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>WebSite Structured Data</label>
+                <comment>
+                    <![CDATA[<p>Add <a href="https://schema.org/WebSite" target="_blank">WebSite Structured Data</a> with optional Sitelinks Searchbox.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable WebSite Structured Data?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sitelinks_searchbox" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Sitelinks Searchbox?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enables the Google search box that appears directly in search results.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="alternate_names" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Alternate Site Names</label>
+                    <comment><![CDATA[Alternative names for your website (one per line). E.g., abbreviations or common misspellings.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
+                Category Structured Data
+            -->
+
+            <group id="category_sd" translate="label" type="text" sortOrder="76" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Category Structured Data</label>
+                <comment>
+                    <![CDATA[<p>Add <a href="https://schema.org/CollectionPage" target="_blank">CollectionPage</a> with ItemList structured data to category pages.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Category Structured Data?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="max_items" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Maximum Products in ItemList</label>
+                    <comment><![CDATA[Maximum number of products to include in the ItemList (default: 12)]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
+                FAQ Structured Data
+            -->
+
+            <group id="faq_sd" translate="label" type="text" sortOrder="78" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>FAQ Structured Data</label>
+                <comment>
+                    <![CDATA[<p>Add <a href="https://schema.org/FAQPage" target="_blank">FAQ Structured Data</a> from product/category attributes.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable FAQ Structured Data?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_attribute" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product FAQ Attribute Code</label>
+                    <comment><![CDATA[Attribute containing FAQ data. Format: JSON array [{"question":"...","answer":"..."}] or Q: Question?\nA: Answer]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="category_attribute" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category FAQ Attribute Code</label>
+                    <comment><![CDATA[Attribute containing FAQ data for categories.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
+                LocalBusiness Structured Data
+            -->
+
+            <group id="localbusiness_sd" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>LocalBusiness Structured Data</label>
+                <comment>
+                    <![CDATA[<p>Add <a href="https://schema.org/LocalBusiness" target="_blank">LocalBusiness Structured Data</a> for local shops with opening hours.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable LocalBusiness Structured Data?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Note: Use this instead of Organization SD if you have a physical store location.]]></comment>
+                </field>
+                <field id="type" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Business Type</label>
+                    <source_model>FlipDev\Seo\Model\Source\LocalBusinessTypes</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="name" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Business Name</label>
+                    <comment><![CDATA[Leave empty to use Store Name from General > Store Information.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="description" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Business Description</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="opening_hours" translate="label" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Opening Hours</label>
+                    <comment><![CDATA[Format: Mo-Fr 09:00-18:00, Sa 10:00-16:00 (comma separated)]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="price_range" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Price Range</label>
+                    <comment><![CDATA[E.g., $, $$, $$$, or €€]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="latitude" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Latitude</label>
+                    <comment><![CDATA[Geo coordinates for your business location]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="longitude" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Longitude</label>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
+                OpenGraph Meta Tags
+            -->
+
+            <group id="opengraph" translate="label" type="text" sortOrder="82" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>OpenGraph Meta Tags</label>
+                <comment>
+                    <![CDATA[<p>Add OpenGraph meta tags for better social media sharing (Facebook, LinkedIn, etc.).</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable OpenGraph Meta Tags?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="default_image" translate="label" type="image" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default OG Image</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">flipdev/seo</upload_dir>
+                    <base_url type="media" scope_info="1">flipdev/seo</base_url>
+                    <comment><![CDATA[Fallback image when no product/category image is available. Recommended size: 1200x630px.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
+                Hreflang Tags
+            -->
+
+            <group id="hreflang" translate="label" type="text" sortOrder="84" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Hreflang Tags</label>
+                <comment>
+                    <![CDATA[<p>Add hreflang tags for multi-language/multi-region stores to help Google serve the correct version.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Hreflang Tags?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Only useful if you have multiple store views with different languages/regions.]]></comment>
                 </field>
             </group>
 

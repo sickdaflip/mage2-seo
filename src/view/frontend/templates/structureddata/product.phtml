@@ -91,6 +91,18 @@ $offer = [
     'seller' => $block->getSeller(),
 ];
 
+// Add shipping details if configured
+$shippingDetails = $block->getShippingDetails();
+if ($shippingDetails) {
+    $offer['shippingDetails'] = $shippingDetails;
+}
+
+// Add return policy if configured
+$returnPolicy = $block->getReturnPolicy();
+if ($returnPolicy) {
+    $offer['hasMerchantReturnPolicy'] = $returnPolicy;
+}
+
 $structuredData['offers'] = $offer;
 
 // Add aggregate rating if reviews exist

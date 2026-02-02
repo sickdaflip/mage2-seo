@@ -1,0 +1,10 @@
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\StructuredData\Breadcrumbs $block */
+
+if (!$block->hasBreadcrumbs()) {
+    return;
+}
+
+echo json_encode($block->getStructuredData(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

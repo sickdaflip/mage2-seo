@@ -41,6 +41,27 @@
             <logo_sd>
                 <enabled>1</enabled>
             </logo_sd>
+            <breadcrumbs_sd>
+                <enabled>1</enabled>
+            </breadcrumbs_sd>
+            <website_sd>
+                <enabled>1</enabled>
+                <sitelinks_searchbox>1</sitelinks_searchbox>
+            </website_sd>
+            <category_sd>
+                <enabled>1</enabled>
+                <max_items>12</max_items>
+            </category_sd>
+            <faq_sd>
+                <enabled>0</enabled>
+            </faq_sd>
+            <localbusiness_sd>
+                <enabled>0</enabled>
+                <type>Store</type>
+            </localbusiness_sd>
+            <hreflang>
+                <enabled>0</enabled>
+            </hreflang>
             <google_content_grouping>
                 <enabled>0</enabled>
             </google_content_grouping>

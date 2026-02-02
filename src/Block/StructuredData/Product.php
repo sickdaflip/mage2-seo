@@ -559,4 +559,99 @@ class Product extends \FlipDev\Seo\Block\Template
 
         return (float)$product->getPrice();
     }
+
+    /**
+     * Get shipping details for structured data
+     *
+     * @return array|null
+     */
+    public function getShippingDetails(): ?array
+    {
+        $enabled = $this->helper->getConfig('flipdev_seo/product_sd/shipping_enabled');
+        if (!$enabled) {
+            return null;
+        }
+
+        $shippingRate = $this->helper->getConfig('flipdev_seo/product_sd/shipping_rate');
+        $shippingDays = $this->helper->getConfig('flipdev_seo/product_sd/shipping_days');
+        $shippingCountry = $this->helper->getConfig('flipdev_seo/product_sd/shipping_country')
+            ?: $this->helper->getConfig('general/country/default');
+
+        if (!$shippingRate && !$shippingDays) {
+            return null;
+        }
+
+        $shippingDetails = [
+            '@type' => 'OfferShippingDetails',
+            'shippingDestination' => [
+                '@type' => 'DefinedRegion',
+                'addressCountry' => $shippingCountry,
+            ],
+        ];
+
+        if ($shippingRate !== null && $shippingRate !== '') {
+            $shippingDetails['shippingRate'] = [
+                '@type' => 'MonetaryAmount',
+                'value' => number_format((float)$shippingRate, 2, '.', ''),
+                'currency' => $this->getCurrencyCode(),
+            ];
+        }
+
+        if ($shippingDays) {
+            $days = explode('-', $shippingDays);
+            $minDays = (int)($days[0] ?? 1);
+            $maxDays = (int)($days[1] ?? $minDays);
+
+            $shippingDetails['deliveryTime'] = [
+                '@type' => 'ShippingDeliveryTime',
+                'handlingTime' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => 0,
+                    'maxValue' => 1,
+                    'unitCode' => 'DAY',
+                ],
+                'transitTime' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => $minDays,
+                    'maxValue' => $maxDays,
+                    'unitCode' => 'DAY',
+                ],
+            ];
+        }
+
+        return $shippingDetails;
+    }
+
+    /**
+     * Get return policy for structured data
+     *
+     * @return array|null
+     */
+    public function getReturnPolicy(): ?array
+    {
+        $enabled = $this->helper->getConfig('flipdev_seo/product_sd/return_enabled');
+        if (!$enabled) {
+            return null;
+        }
+
+        $returnDays = $this->helper->getConfig('flipdev_seo/product_sd/return_days') ?: 14;
+        $returnCountry = $this->helper->getConfig('flipdev_seo/product_sd/return_country')
+            ?: $this->helper->getConfig('general/country/default');
+        $returnFees = $this->helper->getConfig('flipdev_seo/product_sd/return_fees') ?: 'FreeReturn';
+
+        $feesMap = [
+            'FreeReturn' => 'https://schema.org/FreeReturn',
+            'ReturnFeesCustomerResponsibility' => 'https://schema.org/ReturnFeesCustomerResponsibility',
+            'ReturnShippingFees' => 'https://schema.org/ReturnShippingFees',
+        ];
+
+        return [
+            '@type' => 'MerchantReturnPolicy',
+            'applicableCountry' => $returnCountry,
+            'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            'merchantReturnDays' => (int)$returnDays,
+            'returnMethod' => 'https://schema.org/ReturnByMail',
+            'returnFees' => $feesMap[$returnFees] ?? 'https://schema.org/FreeReturn',
+        ];
+    }
 }

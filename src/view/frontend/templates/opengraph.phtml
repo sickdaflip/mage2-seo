@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\OpenGraph $block */
+?>
+<meta property="og:type" content="<?= $block->escapeHtmlAttr($block->getPageType()) ?>" />
+<meta property="og:title" content="<?= $block->escapeHtmlAttr($block->getOgTitle()) ?>" />
+<meta property="og:description" content="<?= $block->escapeHtmlAttr($block->getOgDescription()) ?>" />
+<meta property="og:url" content="<?= $block->escapeUrl($block->getOgUrl()) ?>" />
+<meta property="og:site_name" content="<?= $block->escapeHtmlAttr($block->getSiteName()) ?>" />
+<meta property="og:locale" content="<?= $block->escapeHtmlAttr($block->getLocale()) ?>" />
+<?php if ($image = $block->getOgImage()): ?>
+<meta property="og:image" content="<?= $block->escapeUrl($image) ?>" />
+<?php endif; ?>
+<?php if ($productData = $block->getProductData()): ?>
+<meta property="product:price:amount" content="<?= $block->escapeHtmlAttr($productData['price']) ?>" />
+<meta property="product:price:currency" content="<?= $block->escapeHtmlAttr($productData['currency']) ?>" />
+<meta property="product:availability" content="<?= $block->escapeHtmlAttr($productData['availability']) ?>" />
+<?php if ($productData['brand']): ?>
+<meta property="product:brand" content="<?= $block->escapeHtmlAttr($productData['brand']) ?>" />
+<?php endif; ?>
+<?php endif; ?>

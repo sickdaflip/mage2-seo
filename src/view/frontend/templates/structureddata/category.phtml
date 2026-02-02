@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\StructuredData\Category $block */
+
+if (!$block->isCategoryPage()) {
+    return;
+}
+
+$data = $block->getStructuredData();
+if (empty($data)) {
+    return;
+}
+
+echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
