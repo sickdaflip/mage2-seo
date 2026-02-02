@@ -120,6 +120,20 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="color_attribute" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Color Attribute Code</label>
+                    <comment><![CDATA[Enter the product attribute code for color. Defaults to "color" if left empty.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="material_attribute" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Material Attribute Code</label>
+                    <comment><![CDATA[Enter the product attribute code for material (e.g., "material"). Leave empty if not used.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <!--

@@ -377,4 +377,186 @@ class Product extends \FlipDev\Seo\Block\Template
 
         return 'https://schema.org/NewCondition';
     }
+
+    /**
+     * Get all product gallery images
+     *
+     * @return array
+     */
+    public function getProductImages(): array
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return [];
+        }
+
+        $images = [];
+        $mediaGallery = $product->getMediaGalleryImages();
+
+        if ($mediaGallery && $mediaGallery->getSize() > 0) {
+            foreach ($mediaGallery as $image) {
+                $images[] = $image->getUrl();
+            }
+        }
+
+        // Fallback to main image if no gallery images
+        if (empty($images)) {
+            $mainImage = $this->getProductImageUrl();
+            if ($mainImage) {
+                $images[] = $mainImage;
+            }
+        }
+
+        return $images;
+    }
+
+    /**
+     * Get seller/store information
+     *
+     * @return array
+     */
+    public function getSeller(): array
+    {
+        $storeName = $this->helper->getConfig('general/store_information/name');
+        $storeUrl = $this->storeManager->getStore()->getBaseUrl();
+
+        return [
+            '@type' => 'Organization',
+            'name' => $storeName ?: $this->storeManager->getStore()->getName(),
+            'url' => $storeUrl,
+        ];
+    }
+
+    /**
+     * Get product weight
+     *
+     * @return array|null
+     */
+    public function getProductWeight(): ?array
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $weight = $product->getWeight();
+        if ($weight && $weight > 0) {
+            $weightUnit = $this->helper->getConfig('general/locale/weight_unit') ?: 'kgs';
+            $unitCode = $weightUnit === 'lbs' ? 'LBR' : 'KGM';
+
+            return [
+                '@type' => 'QuantitativeValue',
+                'value' => (float)$weight,
+                'unitCode' => $unitCode,
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get product color
+     *
+     * @return string|null
+     */
+    public function getColor(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $colorAttribute = $this->helper->getConfig('flipdev_seo/product_sd/color_attribute') ?: 'color';
+        $color = $product->getAttributeText($colorAttribute);
+
+        if ($color && !is_array($color)) {
+            return $this->helper->cleanString((string)$color);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get product material
+     *
+     * @return string|null
+     */
+    public function getMaterial(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $materialAttribute = $this->helper->getConfig('flipdev_seo/product_sd/material_attribute');
+        if ($materialAttribute) {
+            $material = $product->getAttributeText($materialAttribute);
+            if ($material && !is_array($material)) {
+                return $this->helper->cleanString((string)$material);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get product category name
+     *
+     * @return string|null
+     */
+    public function getCategoryName(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $categoryIds = $product->getCategoryIds();
+        if (!empty($categoryIds)) {
+            $categoryId = end($categoryIds);
+            try {
+                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                $category = $objectManager->get(\Magento\Catalog\Api\CategoryRepositoryInterface::class)
+                    ->get($categoryId, $this->storeManager->getStore()->getId());
+                return $this->helper->cleanString($category->getName());
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if product has special price
+     *
+     * @return bool
+     */
+    public function hasSpecialPrice(): bool
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return false;
+        }
+
+        $specialPrice = $product->getSpecialPrice();
+        $regularPrice = $product->getPrice();
+
+        return $specialPrice && $specialPrice < $regularPrice;
+    }
+
+    /**
+     * Get regular price (for comparison when special price exists)
+     *
+     * @return float|null
+     */
+    public function getRegularPrice(): ?float
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        return (float)$product->getPrice();
+    }
 }

@@ -14,9 +14,14 @@ $structuredData = [
     'name' => $block->getProductName(),
     'description' => $block->getProductDescription(),
     'sku' => $block->getProductSku(),
-    'image' => $block->getProductImageUrl(),
     'url' => $block->getProductUrl(),
 ];
+
+// Add images (single or multiple)
+$images = $block->getProductImages();
+if (!empty($images)) {
+    $structuredData['image'] = count($images) === 1 ? $images[0] : $images;
+}
 
 // Add brand if available
 $brand = $block->getBrand();
@@ -25,6 +30,30 @@ if ($brand) {
         '@type' => 'Brand',
         'name' => $brand,
     ];
+}
+
+// Add category if available
+$category = $block->getCategoryName();
+if ($category) {
+    $structuredData['category'] = $category;
+}
+
+// Add color if available
+$color = $block->getColor();
+if ($color) {
+    $structuredData['color'] = $color;
+}
+
+// Add material if available
+$material = $block->getMaterial();
+if ($material) {
+    $structuredData['material'] = $material;
+}
+
+// Add weight if available
+$weight = $block->getProductWeight();
+if ($weight) {
+    $structuredData['weight'] = $weight;
 }
 
 // Add GTIN if available
@@ -51,7 +80,7 @@ if ($mpn) {
 }
 
 // Add offers
-$structuredData['offers'] = [
+$offer = [
     '@type' => 'Offer',
     'url' => $block->getProductUrl(),
     'priceCurrency' => $block->getCurrencyCode(),
@@ -59,7 +88,10 @@ $structuredData['offers'] = [
     'priceValidUntil' => $block->getPriceValidUntil(),
     'availability' => $block->getAvailability(),
     'itemCondition' => $block->getCondition(),
+    'seller' => $block->getSeller(),
 ];
+
+$structuredData['offers'] = $offer;
 
 // Add aggregate rating if reviews exist
 if ($block->hasReviews()) {
