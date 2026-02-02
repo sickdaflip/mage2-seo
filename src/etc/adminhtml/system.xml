@@ -77,6 +77,52 @@
             </group>
 
             <!--
+                Product Structured Data (Schema.org)
+            -->
+
+            <group id="product_sd" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>Product Structured Data (Schema.org)</label>
+                <comment>
+                    <![CDATA[
+                        <p>Add <a href="https://schema.org/Product" target="_blank">Product Structured Data</a> (JSON-LD) to your product pages for better search engine visibility and rich snippets.</p>
+                    ]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Product Structured Data?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="brand_attribute" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Brand Attribute Code</label>
+                    <comment><![CDATA[Enter the product attribute code for brand (e.g., "brand" or "manufacturer"). Leave empty to use "manufacturer" as fallback.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="gtin_attribute" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>GTIN/EAN Attribute Code</label>
+                    <comment><![CDATA[Enter the product attribute code for GTIN/EAN/UPC (e.g., "ean", "gtin", "upc"). Leave empty if not used.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="mpn_attribute" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>MPN Attribute Code</label>
+                    <comment><![CDATA[Enter the product attribute code for Manufacturer Part Number (MPN). Leave empty if not used.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="condition_attribute" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Condition Attribute Code</label>
+                    <comment><![CDATA[Enter the product attribute code for product condition. Values should be: "new", "used", "refurbished", or "damaged". Leave empty to default to "NewCondition".]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
                 Default Page Titles & Meta Descriptions
             -->
 

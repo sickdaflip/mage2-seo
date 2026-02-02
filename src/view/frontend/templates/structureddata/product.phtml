@@ -1,0 +1,80 @@
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\StructuredData\Product $block */
+
+$product = $block->getProduct();
+if (!$product) {
+    return;
+}
+
+$structuredData = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $block->getProductName(),
+    'description' => $block->getProductDescription(),
+    'sku' => $block->getProductSku(),
+    'image' => $block->getProductImageUrl(),
+    'url' => $block->getProductUrl(),
+];
+
+// Add brand if available
+$brand = $block->getBrand();
+if ($brand) {
+    $structuredData['brand'] = [
+        '@type' => 'Brand',
+        'name' => $brand,
+    ];
+}
+
+// Add GTIN if available
+$gtin = $block->getGtin();
+if ($gtin) {
+    $gtinLength = strlen($gtin);
+    if ($gtinLength === 8) {
+        $structuredData['gtin8'] = $gtin;
+    } elseif ($gtinLength === 12) {
+        $structuredData['gtin12'] = $gtin;
+    } elseif ($gtinLength === 13) {
+        $structuredData['gtin13'] = $gtin;
+    } elseif ($gtinLength === 14) {
+        $structuredData['gtin14'] = $gtin;
+    } else {
+        $structuredData['gtin'] = $gtin;
+    }
+}
+
+// Add MPN if available
+$mpn = $block->getMpn();
+if ($mpn) {
+    $structuredData['mpn'] = $mpn;
+}
+
+// Add offers
+$structuredData['offers'] = [
+    '@type' => 'Offer',
+    'url' => $block->getProductUrl(),
+    'priceCurrency' => $block->getCurrencyCode(),
+    'price' => number_format($block->getProductPrice(), 2, '.', ''),
+    'priceValidUntil' => $block->getPriceValidUntil(),
+    'availability' => $block->getAvailability(),
+    'itemCondition' => $block->getCondition(),
+];
+
+// Add aggregate rating if reviews exist
+if ($block->hasReviews()) {
+    $ratingValue = $block->getRatingValue();
+    $reviewCount = $block->getReviewCount();
+
+    if ($ratingValue && $reviewCount) {
+        $structuredData['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => $ratingValue,
+            'bestRating' => 5,
+            'worstRating' => 1,
+            'reviewCount' => $reviewCount,
+        ];
+    }
+}
+
+echo json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
