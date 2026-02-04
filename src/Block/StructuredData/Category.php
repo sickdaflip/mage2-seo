@@ -15,7 +15,6 @@ namespace FlipDev\Seo\Block\StructuredData;
 
 use Magento\Framework\View\Element\Template\Context;
 use FlipDev\Seo\Helper\Data as SeoHelper;
-use Magento\Catalog\Model\Layer\Resolver as LayerResolver;
 
 class Category extends \FlipDev\Seo\Block\Template
 {
@@ -25,34 +24,18 @@ class Category extends \FlipDev\Seo\Block\Template
     protected $registry;
 
     /**
-     * @var LayerResolver
-     */
-    protected $layerResolver;
-
-    /**
-     * @var \Magento\Catalog\Helper\Image
-     */
-    protected $imageHelper;
-
-    /**
      * @param Context $context
      * @param SeoHelper $flipDevSeoHelper
      * @param \Magento\Framework\Registry $registry
-     * @param LayerResolver $layerResolver
-     * @param \Magento\Catalog\Helper\Image $imageHelper
      * @param array $data
      */
     public function __construct(
         Context $context,
         SeoHelper $flipDevSeoHelper,
         \Magento\Framework\Registry $registry,
-        LayerResolver $layerResolver,
-        \Magento\Catalog\Helper\Image $imageHelper,
         array $data = []
     ) {
         $this->registry = $registry;
-        $this->layerResolver = $layerResolver;
-        $this->imageHelper = $imageHelper;
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -77,63 +60,13 @@ class Category extends \FlipDev\Seo\Block\Template
     }
 
     /**
-     * Get product collection items for ItemList
-     *
-     * IMPORTANT: We must NOT modify the layer's product collection
-     * as it would break Toolbar/ElasticSuite pagination and sorting.
-     * Instead, we iterate and limit manually.
-     *
-     * @return array
-     */
-    public function getProductItems(): array
-    {
-        $items = [];
-        $position = 1;
-
-        try {
-            $layer = $this->layerResolver->get();
-            $productCollection = $layer->getProductCollection();
-
-            // Get configured max items - DO NOT use setPageSize() as it modifies the shared collection!
-            $maxItems = (int)($this->helper->getConfig('flipdev_seo/category_sd/max_items') ?: 12);
-
-            // Iterate manually and limit without modifying the collection
-            $count = 0;
-            foreach ($productCollection as $product) {
-                if ($count >= $maxItems) {
-                    break;
-                }
-
-                $items[] = [
-                    '@type' => 'ListItem',
-                    'position' => $position++,
-                    'item' => [
-                        '@type' => 'Product',
-                        'name' => $this->helper->cleanString($product->getName()),
-                        'url' => $product->getProductUrl(),
-                        'image' => $this->imageHelper->init($product, 'product_small_image')->getUrl(),
-                        'offers' => [
-                            '@type' => 'Offer',
-                            'price' => number_format((float)$product->getFinalPrice(), 2, '.', ''),
-                            'priceCurrency' => $this->_storeManager->getStore()->getCurrentCurrencyCode(),
-                            'availability' => $product->isAvailable()
-                                ? 'https://schema.org/InStock'
-                                : 'https://schema.org/OutOfStock',
-                        ],
-                    ],
-                ];
-                $count++;
-            }
-        } catch (\Exception $e) {
-            // Layer might not be available
-            return [];
-        }
-
-        return $items;
-    }
-
-    /**
      * Get structured data array
+     *
+     * Simple CollectionPage schema without ItemList.
+     * ItemList with products is intentionally NOT included because:
+     * 1. It can conflict with ElasticSuite/Toolbar
+     * 2. Categories often have 100+ products, making ItemList incomplete
+     * 3. Google crawls product pages individually anyway
      *
      * @return array
      */
@@ -148,23 +81,18 @@ class Category extends \FlipDev\Seo\Block\Template
             '@context' => 'https://schema.org',
             '@type' => 'CollectionPage',
             'name' => $this->helper->cleanString($category->getName()),
-            'description' => $this->helper->cleanString(strip_tags($category->getDescription() ?: '')),
             'url' => $category->getUrl(),
         ];
+
+        // Add description if available
+        $description = $category->getDescription();
+        if ($description) {
+            $data['description'] = $this->helper->cleanString(strip_tags($description));
+        }
 
         // Add category image if available
         if ($category->getImageUrl()) {
             $data['image'] = $category->getImageUrl();
-        }
-
-        // Add ItemList with products
-        $items = $this->getProductItems();
-        if (!empty($items)) {
-            $data['mainEntity'] = [
-                '@type' => 'ItemList',
-                'numberOfItems' => count($items),
-                'itemListElement' => $items,
-            ];
         }
 
         return $data;

@@ -447,18 +447,11 @@
                    showInStore="1">
                 <label>Category Structured Data</label>
                 <comment>
-                    <![CDATA[<p>Add <a href="https://schema.org/CollectionPage" target="_blank">CollectionPage</a> with ItemList structured data to category pages.</p>]]>
+                    <![CDATA[<p>Add <a href="https://schema.org/CollectionPage" target="_blank">CollectionPage Structured Data</a> to category pages. Note: ItemList with products is intentionally not included to avoid conflicts with ElasticSuite and pagination.</p>]]>
                 </comment>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Category Structured Data?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="max_items" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Maximum Products in ItemList</label>
-                    <comment><![CDATA[Maximum number of products to include in the ItemList (default: 12)]]></comment>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>
                 </field>
             </group>
 

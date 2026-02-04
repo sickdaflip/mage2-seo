@@ -50,7 +50,6 @@
             </website_sd>
             <category_sd>
                 <enabled>1</enabled>
-                <max_items>12</max_items>
             </category_sd>
             <faq_sd>
                 <enabled>0</enabled>
