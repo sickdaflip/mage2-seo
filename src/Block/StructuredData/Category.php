@@ -79,6 +79,10 @@ class Category extends \FlipDev\Seo\Block\Template
     /**
      * Get product collection items for ItemList
      *
+     * IMPORTANT: We must NOT modify the layer's product collection
+     * as it would break Toolbar/ElasticSuite pagination and sorting.
+     * Instead, we iterate and limit manually.
+     *
      * @return array
      */
     public function getProductItems(): array
@@ -90,11 +94,16 @@ class Category extends \FlipDev\Seo\Block\Template
             $layer = $this->layerResolver->get();
             $productCollection = $layer->getProductCollection();
 
-            // Limit to configured number of items
+            // Get configured max items - DO NOT use setPageSize() as it modifies the shared collection!
             $maxItems = (int)($this->helper->getConfig('flipdev_seo/category_sd/max_items') ?: 12);
-            $productCollection->setPageSize($maxItems);
 
+            // Iterate manually and limit without modifying the collection
+            $count = 0;
             foreach ($productCollection as $product) {
+                if ($count >= $maxItems) {
+                    break;
+                }
+
                 $items[] = [
                     '@type' => 'ListItem',
                     'position' => $position++,
@@ -113,6 +122,7 @@ class Category extends \FlipDev\Seo\Block\Template
                         ],
                     ],
                 ];
+                $count++;
             }
         } catch (\Exception $e) {
             // Layer might not be available
