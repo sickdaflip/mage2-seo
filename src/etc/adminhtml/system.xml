@@ -593,6 +593,134 @@
             </group>
 
             <!--
+                XML Sitemap (Custom Generator)
+            -->
+
+            <group id="xml_sitemap" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1"
+                   showInStore="1">
+                <label>XML Sitemap (Advanced)</label>
+                <comment>
+                    <![CDATA[<p>Custom XML Sitemap generator with separate sitemaps per content type, XSL styling, and hreflang support. This replaces the native Magento sitemap.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Custom XML Sitemap?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="product_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Products?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="product_images" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Product Images?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Adds image:image tags for Google Image Search.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="product_priority" translate="label" type="text" sortOrder="28" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Priority</label>
+                    <comment><![CDATA[Value between 0.0 and 1.0 (default: 1.0)]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="product_changefreq" translate="label" type="select" sortOrder="29" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Change Frequency</label>
+                    <source_model>FlipDev\Seo\Model\Source\Changefreq</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="category_enabled" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Categories?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="category_priority" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category Priority</label>
+                    <comment><![CDATA[Value between 0.0 and 1.0 (default: 0.8)]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="category_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="category_changefreq" translate="label" type="select" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category Change Frequency</label>
+                    <source_model>FlipDev\Seo\Model\Source\Changefreq</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="category_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="cms_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include CMS Pages?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="cms_priority" translate="label" type="text" sortOrder="43" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>CMS Pages Priority</label>
+                    <comment><![CDATA[Value between 0.0 and 1.0 (default: 0.5)]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="cms_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="cms_changefreq" translate="label" type="select" sortOrder="44" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>CMS Pages Change Frequency</label>
+                    <source_model>FlipDev\Seo\Model\Source\Changefreq</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="cms_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="hreflang_enabled" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Hreflang Links?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Adds alternate language links for multi-store setups.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="exclude_out_of_stock" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exclude Out of Stock Products?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="exclude_disabled" translate="label" type="select" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exclude Disabled Products?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enabled by default. Only include products with status "Enabled".]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="exclude_not_visible" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exclude Not Visible Products?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enabled by default. Only include products visible in catalog or search.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
                 Google Content Grouping
             -->
 

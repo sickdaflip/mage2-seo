@@ -103,4 +103,26 @@
             <argument name="logger" xsi:type="object">FlipDevSeoLogger</argument>
         </arguments>
     </type>
+
+    <!-- Inject custom logger into Sitemap Builder -->
+    <type name="FlipDev\Seo\Model\XmlSitemap\SitemapBuilder">
+        <arguments>
+            <argument name="logger" xsi:type="object">FlipDevSeoLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="FlipDev\Seo\Cron\GenerateSitemap">
+        <arguments>
+            <argument name="logger" xsi:type="object">FlipDevSeoLogger</argument>
+        </arguments>
+    </type>
+
+    <!-- Register CLI Commands -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="flipdev_sitemap_generate" xsi:type="object">FlipDev\Seo\Console\Command\GenerateSitemapCommand</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
