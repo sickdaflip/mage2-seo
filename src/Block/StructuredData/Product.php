@@ -182,11 +182,17 @@ class Product extends \FlipDev\Seo\Block\Template
         }
 
         // Always return price INCLUDING tax for Schema.org structured data
-        // Third parameter = true forces including tax regardless of store config
+        // Parameters: product, price, includingTax, shippingAddress, billingAddress, ctc, store, priceIncludesTax
+        // priceIncludesTax=false tells the method the input price is NET and tax must be added
         return (float)$this->catalogHelper->getTaxPrice(
             $product,
             $price,
-            true // includingTax = true
+            true,   // includingTax = true (we want gross price output)
+            null,   // shippingAddress
+            null,   // billingAddress
+            null,   // customer tax class
+            null,   // store
+            false   // priceIncludesTax = false (input price is NET, add tax)
         );
     }
 
@@ -613,10 +619,16 @@ class Product extends \FlipDev\Seo\Block\Template
         $price = (float)$product->getPrice();
 
         // Always return price INCLUDING tax for Schema.org structured data
+        // priceIncludesTax=false tells the method the input price is NET and tax must be added
         return (float)$this->catalogHelper->getTaxPrice(
             $product,
             $price,
-            true // includingTax = true
+            true,   // includingTax = true (we want gross price output)
+            null,   // shippingAddress
+            null,   // billingAddress
+            null,   // customer tax class
+            null,   // store
+            false   // priceIncludesTax = false (input price is NET, add tax)
         );
     }
 
