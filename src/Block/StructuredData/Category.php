@@ -15,6 +15,7 @@ namespace FlipDev\Seo\Block\StructuredData;
 
 use Magento\Framework\View\Element\Template\Context;
 use FlipDev\Seo\Helper\Data as SeoHelper;
+use Magento\Store\Model\StoreManagerInterface;
 
 class Category extends \FlipDev\Seo\Block\Template
 {
@@ -22,6 +23,11 @@ class Category extends \FlipDev\Seo\Block\Template
      * @var \Magento\Framework\Registry
      */
     protected $registry;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
 
     /**
      * @param Context $context
@@ -36,6 +42,7 @@ class Category extends \FlipDev\Seo\Block\Template
         array $data = []
     ) {
         $this->registry = $registry;
+        $this->storeManager = $context->getStoreManager();
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -91,10 +98,39 @@ class Category extends \FlipDev\Seo\Block\Template
         }
 
         // Add category image if available
-        if ($category->getImageUrl()) {
-            $data['image'] = $category->getImageUrl();
+        $imageUrl = $this->getCategoryImageUrl($category);
+        if ($imageUrl) {
+            $data['image'] = $imageUrl;
         }
 
         return $data;
+    }
+
+    /**
+     * Get category image URL with full domain
+     *
+     * @param \Magento\Catalog\Model\Category $category
+     * @return string|null
+     */
+    private function getCategoryImageUrl($category): ?string
+    {
+        $imageUrl = $category->getImageUrl();
+
+        if (!$imageUrl) {
+            return null;
+        }
+
+        // If URL already has http/https, return as is
+        if (str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')) {
+            return $imageUrl;
+        }
+
+        // Prepend base URL if relative path
+        try {
+            $baseUrl = $this->storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
+            return rtrim($baseUrl, '/') . '/' . ltrim($imageUrl, '/');
+        } catch (\Exception $e) {
+            return $imageUrl;
+        }
     }
 }
