@@ -779,9 +779,10 @@ class Product extends \FlipDev\Seo\Block\Template
             return null;
         }
 
-        $updatedAt = $product->getUpdatedAt();
-        if ($updatedAt) {
-            return date('Y-m-d', strtotime($updatedAt));
+        // Try updated_at first, fallback to created_at
+        $date = $product->getUpdatedAt() ?: $product->getCreatedAt();
+        if ($date) {
+            return date('Y-m-d', strtotime($date));
         }
 
         return null;
