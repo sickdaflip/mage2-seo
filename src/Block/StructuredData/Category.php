@@ -91,6 +91,12 @@ class Category extends \FlipDev\Seo\Block\Template
             'url' => $category->getUrl(),
         ];
 
+        // Add dateModified if available
+        $dateModified = $this->getDateModified($category);
+        if ($dateModified) {
+            $data['dateModified'] = $dateModified;
+        }
+
         // Add description if available
         $description = $category->getDescription();
         if ($description) {
@@ -132,5 +138,20 @@ class Category extends \FlipDev\Seo\Block\Template
         } catch (\Exception $e) {
             return $imageUrl;
         }
+    }
+
+    /**
+     * Get date modified in ISO 8601 format
+     *
+     * @param \Magento\Catalog\Model\Category $category
+     * @return string|null
+     */
+    private function getDateModified($category): ?string
+    {
+        $date = $category->getUpdatedAt() ?: $category->getCreatedAt();
+        if ($date) {
+            return date('Y-m-d', strtotime($date));
+        }
+        return null;
     }
 }
