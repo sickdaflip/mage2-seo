@@ -17,6 +17,7 @@ use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Review\Model\ReviewFactory;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Helper\Data as CatalogHelper;
 
 class Product extends \FlipDev\Seo\Block\Template
 {
@@ -56,6 +57,11 @@ class Product extends \FlipDev\Seo\Block\Template
     protected $imageHelper;
 
     /**
+     * @var CatalogHelper
+     */
+    protected $catalogHelper;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
      * @param \Magento\Framework\Registry $registry
@@ -63,6 +69,7 @@ class Product extends \FlipDev\Seo\Block\Template
      * @param PriceCurrencyInterface $priceCurrency
      * @param ReviewFactory $reviewFactory
      * @param \Magento\Catalog\Helper\Image $imageHelper
+     * @param CatalogHelper $catalogHelper
      * @param array $data
      */
     public function __construct(
@@ -73,6 +80,7 @@ class Product extends \FlipDev\Seo\Block\Template
         PriceCurrencyInterface $priceCurrency,
         ReviewFactory $reviewFactory,
         \Magento\Catalog\Helper\Image $imageHelper,
+        CatalogHelper $catalogHelper,
         array $data = []
     ) {
         $this->_coreRegistry = $registry;
@@ -81,6 +89,7 @@ class Product extends \FlipDev\Seo\Block\Template
         $this->reviewFactory = $reviewFactory;
         $this->storeManager = $context->getStoreManager();
         $this->imageHelper = $imageHelper;
+        $this->catalogHelper = $catalogHelper;
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -154,7 +163,7 @@ class Product extends \FlipDev\Seo\Block\Template
     }
 
     /**
-     * Get product price
+     * Get product price (always including tax for Schema.org)
      *
      * @return float
      */
@@ -166,10 +175,13 @@ class Product extends \FlipDev\Seo\Block\Template
         }
 
         if ($product->getTypeId() === 'bundle') {
-            return (float)$this->_bundlePrice->getTotalPrices($product, 'min', 1);
+            $price = (float)$this->_bundlePrice->getTotalPrices($product, 'min', 1);
+        } else {
+            $price = (float)$product->getFinalPrice();
         }
 
-        return (float)$product->getFinalPrice();
+        // Always return price including tax for Schema.org structured data
+        return (float)$this->catalogHelper->getTaxPrice($product, $price, true);
     }
 
     /**
@@ -361,18 +373,29 @@ class Product extends \FlipDev\Seo\Block\Template
             return 'https://schema.org/NewCondition';
         }
 
-        $conditionAttribute = $this->helper->getConfig('flipdev_seo/product_sd/condition_attribute');
-        if ($conditionAttribute) {
+        // Default to "condition" attribute if not configured
+        $conditionAttribute = $this->helper->getConfig('flipdev_seo/product_sd/condition_attribute') ?: 'condition';
+
+        // Try to get attribute text first (for select/dropdown attributes)
+        $condition = $product->getAttributeText($conditionAttribute);
+
+        // Fallback to raw data if getAttributeText returns false/empty
+        if (!$condition) {
             $condition = $product->getData($conditionAttribute);
-            if ($condition) {
-                $conditionMap = [
-                    'new' => 'https://schema.org/NewCondition',
-                    'used' => 'https://schema.org/UsedCondition',
-                    'refurbished' => 'https://schema.org/RefurbishedCondition',
-                    'damaged' => 'https://schema.org/DamagedCondition',
-                ];
-                return $conditionMap[strtolower($condition)] ?? 'https://schema.org/NewCondition';
-            }
+        }
+
+        if ($condition && !is_array($condition)) {
+            $conditionMap = [
+                'new' => 'https://schema.org/NewCondition',
+                'neu' => 'https://schema.org/NewCondition',
+                'used' => 'https://schema.org/UsedCondition',
+                'gebraucht' => 'https://schema.org/UsedCondition',
+                'refurbished' => 'https://schema.org/RefurbishedCondition',
+                'generalüberholt' => 'https://schema.org/RefurbishedCondition',
+                'damaged' => 'https://schema.org/DamagedCondition',
+                'beschädigt' => 'https://schema.org/DamagedCondition',
+            ];
+            return $conditionMap[strtolower((string)$condition)] ?? 'https://schema.org/NewCondition';
         }
 
         return 'https://schema.org/NewCondition';
@@ -546,7 +569,7 @@ class Product extends \FlipDev\Seo\Block\Template
     }
 
     /**
-     * Get regular price (for comparison when special price exists)
+     * Get regular price (for comparison when special price exists) - always including tax
      *
      * @return float|null
      */
@@ -557,7 +580,10 @@ class Product extends \FlipDev\Seo\Block\Template
             return null;
         }
 
-        return (float)$product->getPrice();
+        $price = (float)$product->getPrice();
+
+        // Always return price including tax for Schema.org structured data
+        return (float)$this->catalogHelper->getTaxPrice($product, $price, true);
     }
 
     /**
