@@ -177,11 +177,17 @@ class Product extends \FlipDev\Seo\Block\Template
         if ($product->getTypeId() === 'bundle') {
             $price = (float)$this->_bundlePrice->getTotalPrices($product, 'min', 1);
         } else {
+            // Use final price (considers special price, tier prices, etc.)
             $price = (float)$product->getFinalPrice();
         }
 
-        // Always return price including tax for Schema.org structured data
-        return (float)$this->catalogHelper->getTaxPrice($product, $price, true);
+        // Always return price INCLUDING tax for Schema.org structured data
+        // Third parameter = true forces including tax regardless of store config
+        return (float)$this->catalogHelper->getTaxPrice(
+            $product,
+            $price,
+            true // includingTax = true
+        );
     }
 
     /**
@@ -551,7 +557,7 @@ class Product extends \FlipDev\Seo\Block\Template
     }
 
     /**
-     * Check if product has special price
+     * Check if product has active special price
      *
      * @return bool
      */
@@ -565,7 +571,31 @@ class Product extends \FlipDev\Seo\Block\Template
         $specialPrice = $product->getSpecialPrice();
         $regularPrice = $product->getPrice();
 
-        return $specialPrice && $specialPrice < $regularPrice;
+        if (!$specialPrice || $specialPrice >= $regularPrice) {
+            return false;
+        }
+
+        // Check date range
+        $now = new \DateTime();
+        $fromDate = $product->getSpecialFromDate();
+        $toDate = $product->getSpecialToDate();
+
+        if ($fromDate) {
+            $from = new \DateTime($fromDate);
+            if ($now < $from) {
+                return false; // Special price not yet active
+            }
+        }
+
+        if ($toDate) {
+            $to = new \DateTime($toDate);
+            $to->setTime(23, 59, 59); // End of day
+            if ($now > $to) {
+                return false; // Special price expired
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -582,8 +612,52 @@ class Product extends \FlipDev\Seo\Block\Template
 
         $price = (float)$product->getPrice();
 
-        // Always return price including tax for Schema.org structured data
-        return (float)$this->catalogHelper->getTaxPrice($product, $price, true);
+        // Always return price INCLUDING tax for Schema.org structured data
+        return (float)$this->catalogHelper->getTaxPrice(
+            $product,
+            $price,
+            true // includingTax = true
+        );
+    }
+
+    /**
+     * Get special price from date
+     *
+     * @return string|null
+     */
+    public function getSpecialPriceFromDate(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $fromDate = $product->getSpecialFromDate();
+        if ($fromDate) {
+            return date('Y-m-d', strtotime($fromDate));
+        }
+
+        return null;
+    }
+
+    /**
+     * Get special price to date
+     *
+     * @return string|null
+     */
+    public function getSpecialPriceToDate(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $toDate = $product->getSpecialToDate();
+        if ($toDate) {
+            return date('Y-m-d', strtotime($toDate));
+        }
+
+        return null;
     }
 
     /**

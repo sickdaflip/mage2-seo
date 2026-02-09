@@ -85,11 +85,25 @@ $offer = [
     'url' => $block->getProductUrl(),
     'priceCurrency' => $block->getCurrencyCode(),
     'price' => number_format($block->getProductPrice(), 2, '.', ''),
-    'priceValidUntil' => $block->getPriceValidUntil(),
     'availability' => $block->getAvailability(),
     'itemCondition' => $block->getCondition(),
     'seller' => $block->getSeller(),
 ];
+
+// Add price validity dates
+if ($block->hasSpecialPrice()) {
+    // Special price is active
+    $toDate = $block->getSpecialPriceToDate();
+    if ($toDate) {
+        $offer['priceValidUntil'] = $toDate;
+    } else {
+        // No end date, use 1 year as default
+        $offer['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
+    }
+} else {
+    // Regular price, use 1 year validity
+    $offer['priceValidUntil'] = $block->getPriceValidUntil();
+}
 
 // Add shipping details if configured
 $shippingDetails = $block->getShippingDetails();
