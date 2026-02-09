@@ -766,4 +766,79 @@ class Product extends \FlipDev\Seo\Block\Template
             'returnFees' => $feesMap[$returnFees] ?? 'https://schema.org/FreeReturn',
         ];
     }
+
+    /**
+     * Get product last modified date
+     *
+     * @return string|null
+     */
+    public function getDateModified(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $updatedAt = $product->getUpdatedAt();
+        if ($updatedAt) {
+            return date('Y-m-d', strtotime($updatedAt));
+        }
+
+        return null;
+    }
+
+    /**
+     * Get energy efficiency rating for Schema.org
+     *
+     * @return array|null
+     */
+    public function getEnergyEfficiency(): ?array
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        $energyAttribute = $this->helper->getConfig('flipdev_seo/product_sd/energy_efficiency_attribute');
+        if (!$energyAttribute) {
+            return null;
+        }
+
+        // Try to get attribute text first (for select/dropdown attributes)
+        $energyClass = $product->getAttributeText($energyAttribute);
+        if (!$energyClass) {
+            $energyClass = $product->getData($energyAttribute);
+        }
+
+        if (!$energyClass || is_array($energyClass)) {
+            return null;
+        }
+
+        $energyClass = strtoupper(trim((string)$energyClass));
+
+        // Map energy classes to Schema.org EUEnergyEfficiencyEnumeration
+        // Old scale: A+++, A++, A+, A, B, C, D, E, F, G
+        // New scale (2021+): A, B, C, D, E, F, G
+        $energyMap = [
+            'A+++' => 'https://schema.org/EUEnergyEfficiencyCategoryA3Plus',
+            'A++' => 'https://schema.org/EUEnergyEfficiencyCategoryA2Plus',
+            'A+' => 'https://schema.org/EUEnergyEfficiencyCategoryA1Plus',
+            'A' => 'https://schema.org/EUEnergyEfficiencyCategoryA',
+            'B' => 'https://schema.org/EUEnergyEfficiencyCategoryB',
+            'C' => 'https://schema.org/EUEnergyEfficiencyCategoryC',
+            'D' => 'https://schema.org/EUEnergyEfficiencyCategoryD',
+            'E' => 'https://schema.org/EUEnergyEfficiencyCategoryE',
+            'F' => 'https://schema.org/EUEnergyEfficiencyCategoryF',
+            'G' => 'https://schema.org/EUEnergyEfficiencyCategoryG',
+        ];
+
+        if (!isset($energyMap[$energyClass])) {
+            return null;
+        }
+
+        return [
+            '@type' => 'EnergyConsumptionDetails',
+            'hasEnergyEfficiencyCategory' => $energyMap[$energyClass],
+        ];
+    }
 }

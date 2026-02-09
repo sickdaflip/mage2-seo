@@ -17,6 +17,12 @@ $structuredData = [
     'url' => $block->getProductUrl(),
 ];
 
+// Add dateModified
+$dateModified = $block->getDateModified();
+if ($dateModified) {
+    $structuredData['dateModified'] = $dateModified;
+}
+
 // Add images (single or multiple)
 $images = $block->getProductImages();
 if (!empty($images)) {
@@ -54,6 +60,12 @@ if ($material) {
 $weight = $block->getProductWeight();
 if ($weight) {
     $structuredData['weight'] = $weight;
+}
+
+// Add energy efficiency (EU Energy Label) if available
+$energyEfficiency = $block->getEnergyEfficiency();
+if ($energyEfficiency) {
+    $structuredData['hasEnergyConsumptionDetails'] = $energyEfficiency;
 }
 
 // Add GTIN if available
