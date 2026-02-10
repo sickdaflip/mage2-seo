@@ -80,6 +80,18 @@
                 <cron_enabled>1</cron_enabled>
                 <cron_hour>3</cron_hour>
             </xml_sitemap>
+            <robots_txt>
+                <enabled>0</enabled>
+                <content><![CDATA[User-agent: *
+Disallow: /checkout/
+Disallow: /customer/
+Disallow: /catalogsearch/
+Disallow: /wishlist/
+Disallow: /sendfriend/
+Disallow: /*?
+]]></content>
+                <auto_sitemap>1</auto_sitemap>
+            </robots_txt>
             <google_content_grouping>
                 <enabled>0</enabled>
             </google_content_grouping>

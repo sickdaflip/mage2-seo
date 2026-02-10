@@ -117,11 +117,19 @@
         </arguments>
     </type>
 
+    <!-- Inject custom logger into Robots.txt Generator -->
+    <type name="FlipDev\Seo\Model\RobotsTxt\Generator">
+        <arguments>
+            <argument name="logger" xsi:type="object">FlipDevSeoLogger</argument>
+        </arguments>
+    </type>
+
     <!-- Register CLI Commands -->
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="flipdev_sitemap_generate" xsi:type="object">FlipDev\Seo\Console\Command\GenerateSitemapCommand</item>
+                <item name="flipdev_robots_generate" xsi:type="object">FlipDev\Seo\Console\Command\GenerateRobotsCommand</item>
             </argument>
         </arguments>
     </type>

@@ -746,6 +746,52 @@
             </group>
 
             <!--
+                Robots.txt Editor
+            -->
+
+            <group id="robots_txt" translate="label" type="text" sortOrder="105" showInDefault="1" showInWebsite="0"
+                   showInStore="0">
+                <label>Robots.txt Editor</label>
+                <comment>
+                    <![CDATA[<p>Configure your robots.txt file directly from the admin. Changes will be written to <code>pub/robots.txt</code> when saved.</p>]]>
+                </comment>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Robots.txt Management?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled, the robots.txt file will be managed by this module.]]></comment>
+                </field>
+                <field id="content" translate="label" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Robots.txt Content</label>
+                    <comment><![CDATA[Enter your robots.txt directives. Sitemap URLs will be appended automatically if enabled below.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="auto_sitemap" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Auto-add Sitemap URLs?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Automatically append sitemap URLs from the XML Sitemap configuration.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="custom_sitemaps" translate="label" type="textarea" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Additional Sitemap URLs</label>
+                    <comment><![CDATA[Enter additional sitemap URLs (one per line) to include in robots.txt.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="save_button" translate="label" type="button" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label></label>
+                    <frontend_model>FlipDev\Seo\Block\Adminhtml\System\Config\GenerateRobots</frontend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+
+            <!--
                 Google Content Grouping
             -->
 
