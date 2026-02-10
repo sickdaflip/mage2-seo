@@ -18,6 +18,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Review\Model\ReviewFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Helper\Data as CatalogHelper;
+use Magento\Tax\Model\Calculation as TaxCalculation;
 
 class Product extends \FlipDev\Seo\Block\Template
 {
@@ -62,6 +63,11 @@ class Product extends \FlipDev\Seo\Block\Template
     protected $catalogHelper;
 
     /**
+     * @var TaxCalculation
+     */
+    protected $taxCalculation;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
      * @param \Magento\Framework\Registry $registry
@@ -70,6 +76,7 @@ class Product extends \FlipDev\Seo\Block\Template
      * @param ReviewFactory $reviewFactory
      * @param \Magento\Catalog\Helper\Image $imageHelper
      * @param CatalogHelper $catalogHelper
+     * @param TaxCalculation $taxCalculation
      * @param array $data
      */
     public function __construct(
@@ -81,6 +88,7 @@ class Product extends \FlipDev\Seo\Block\Template
         ReviewFactory $reviewFactory,
         \Magento\Catalog\Helper\Image $imageHelper,
         CatalogHelper $catalogHelper,
+        TaxCalculation $taxCalculation,
         array $data = []
     ) {
         $this->_coreRegistry = $registry;
@@ -90,6 +98,7 @@ class Product extends \FlipDev\Seo\Block\Template
         $this->storeManager = $context->getStoreManager();
         $this->imageHelper = $imageHelper;
         $this->catalogHelper = $catalogHelper;
+        $this->taxCalculation = $taxCalculation;
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -181,19 +190,60 @@ class Product extends \FlipDev\Seo\Block\Template
             $price = (float)$product->getFinalPrice();
         }
 
-        // Always return price INCLUDING tax for Schema.org structured data
-        // Parameters: product, price, includingTax, shippingAddress, billingAddress, ctc, store, priceIncludesTax
-        // priceIncludesTax=false tells the method the input price is NET and tax must be added
-        return (float)$this->catalogHelper->getTaxPrice(
-            $product,
-            $price,
-            true,   // includingTax = true (we want gross price output)
-            null,   // shippingAddress
-            null,   // billingAddress
-            null,   // customer tax class
-            null,   // store
-            false   // priceIncludesTax = false (input price is NET, add tax)
-        );
+        return $this->getPriceWithTax($product, $price);
+    }
+
+    /**
+     * Calculate price with tax using direct tax rate lookup
+     *
+     * @param ProductInterface $product
+     * @param float $price
+     * @return float
+     */
+    protected function getPriceWithTax($product, float $price): float
+    {
+        try {
+            $store = $this->storeManager->getStore();
+
+            // Check if catalog prices already include tax
+            $priceIncludesTax = (bool)$this->helper->getConfig(
+                \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX,
+                $store
+            );
+
+            if ($priceIncludesTax) {
+                // Catalog prices already include tax, return as-is
+                return $price;
+            }
+
+            // Get tax rate directly from tax calculation
+            $taxClassId = $product->getTaxClassId();
+            if (!$taxClassId) {
+                return $price;
+            }
+
+            // Build request for tax rate lookup
+            $request = $this->taxCalculation->getRateRequest(
+                null,  // shipping address (uses default)
+                null,  // billing address (uses default)
+                null,  // customer tax class (uses default)
+                $store
+            );
+            $request->setProductClassId($taxClassId);
+
+            // Get tax rate (e.g., 19 for 19%)
+            $taxRate = $this->taxCalculation->getRate($request);
+
+            if ($taxRate > 0) {
+                // Add tax to price
+                return $price * (1 + ($taxRate / 100));
+            }
+
+            return $price;
+        } catch (\Exception $e) {
+            // Fallback: return original price if tax calculation fails
+            return $price;
+        }
     }
 
     /**
@@ -618,18 +668,7 @@ class Product extends \FlipDev\Seo\Block\Template
 
         $price = (float)$product->getPrice();
 
-        // Always return price INCLUDING tax for Schema.org structured data
-        // priceIncludesTax=false tells the method the input price is NET and tax must be added
-        return (float)$this->catalogHelper->getTaxPrice(
-            $product,
-            $price,
-            true,   // includingTax = true (we want gross price output)
-            null,   // shippingAddress
-            null,   // billingAddress
-            null,   // customer tax class
-            null,   // store
-            false   // priceIncludesTax = false (input price is NET, add tax)
-        );
+        return $this->getPriceWithTax($product, $price);
     }
 
     /**
