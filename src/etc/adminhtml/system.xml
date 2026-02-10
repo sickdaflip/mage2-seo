@@ -725,6 +725,24 @@
                         <field id="product_enabled">1</field>
                     </depends>
                 </field>
+                <field id="cron_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Automatic Generation (Cron)?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Automatically regenerate sitemaps daily.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="cron_hour" translate="label" type="select" sortOrder="85" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Generation Time (Hour)</label>
+                    <source_model>FlipDev\Seo\Model\Source\CronHour</source_model>
+                    <backend_model>FlipDev\Seo\Model\Config\Backend\CronSchedule</backend_model>
+                    <comment><![CDATA[Hour when sitemaps should be regenerated daily (server time).]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="cron_enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <!--

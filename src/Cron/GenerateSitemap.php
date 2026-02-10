@@ -7,12 +7,16 @@ declare(strict_types=1);
 namespace FlipDev\Seo\Cron;
 
 use FlipDev\Seo\Model\XmlSitemap\SitemapBuilder;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemap
 {
+    private const CONFIG_CRON_ENABLED = 'flipdev_seo/xml_sitemap/cron_enabled';
+
     public function __construct(
         private SitemapBuilder $sitemapBuilder,
+        private ScopeConfigInterface $scopeConfig,
         private LoggerInterface $logger
     ) {
     }
@@ -22,6 +26,11 @@ class GenerateSitemap
      */
     public function execute(): void
     {
+        // Check if cron is enabled
+        if (!$this->scopeConfig->isSetFlag(self::CONFIG_CRON_ENABLED)) {
+            return;
+        }
+
         $this->logger->info('FlipDev_Seo: Starting sitemap generation via cron');
 
         try {
