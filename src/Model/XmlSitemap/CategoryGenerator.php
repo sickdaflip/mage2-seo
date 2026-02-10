@@ -59,10 +59,11 @@ class CategoryGenerator extends AbstractGenerator
             ];
 
             // Add category image if available
-            if ($category->getImageUrl()) {
+            $imageUrl = $this->getCategoryImageUrl($category, $storeId);
+            if ($imageUrl) {
                 $item['images'] = [
                     [
-                        'loc' => $category->getImageUrl(),
+                        'loc' => $imageUrl,
                         'title' => $category->getName(),
                     ]
                 ];
@@ -76,6 +77,25 @@ class CategoryGenerator extends AbstractGenerator
         }
 
         return $items;
+    }
+
+    /**
+     * Get category image URL with full domain
+     */
+    private function getCategoryImageUrl($category, int $storeId): ?string
+    {
+        $imageUrl = $category->getImageUrl();
+
+        if (!$imageUrl) {
+            return null;
+        }
+
+        if (str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')) {
+            return $imageUrl;
+        }
+
+        $baseUrl = $this->getBaseUrl($storeId);
+        return $baseUrl . '/' . ltrim($imageUrl, '/');
     }
 
     /**
