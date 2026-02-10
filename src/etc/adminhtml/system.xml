@@ -725,6 +725,14 @@
                         <field id="product_enabled">1</field>
                     </depends>
                 </field>
+                <field id="max_urls_per_sitemap" translate="label" type="text" sortOrder="75" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max URLs per Sitemap</label>
+                    <comment><![CDATA[Maximum URLs per sitemap file (Google limit: 50,000). Sitemaps with more URLs will be split into multiple files.]]></comment>
+                    <validate>validate-number validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
                 <field id="cron_enabled" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Enable Automatic Generation (Cron)?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

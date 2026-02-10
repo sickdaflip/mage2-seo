@@ -20,10 +20,13 @@ use Psr\Log\LoggerInterface;
 class SitemapBuilder
 {
     private const CONFIG_PATH_ENABLED = 'flipdev_seo/xml_sitemap/enabled';
+    private const CONFIG_PATH_MAX_URLS = 'flipdev_seo/xml_sitemap/max_urls_per_sitemap';
+    private const DEFAULT_MAX_URLS = 50000;
 
     private WriteInterface $directory;
     private string $xslUrl = '';
     private string $storeCode = '';
+    private int $maxUrlsPerSitemap = self::DEFAULT_MAX_URLS;
 
     public function __construct(
         private ScopeConfigInterface $scopeConfig,
@@ -48,6 +51,20 @@ class SitemapBuilder
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Get max URLs per sitemap from config
+     */
+    private function getMaxUrlsPerSitemap(int $storeId): int
+    {
+        $value = $this->scopeConfig->getValue(
+            self::CONFIG_PATH_MAX_URLS,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        return $value ? (int) $value : self::DEFAULT_MAX_URLS;
     }
 
     /**
@@ -86,37 +103,35 @@ class SitemapBuilder
         try {
             $this->storeCode = $this->getStoreCode($storeId);
             $this->xslUrl = $this->getXslUrl($storeId);
+            $this->maxUrlsPerSitemap = $this->getMaxUrlsPerSitemap($storeId);
 
-            // Generate product sitemap
+            // Generate product sitemaps (may be split into multiple files)
             if ($this->productGenerator->isEnabled($storeId)) {
                 $items = $this->productGenerator->generate($storeId);
                 if (!empty($items)) {
-                    $filename = $this->getPrefixedFilename($this->productGenerator->getFilename());
-                    $this->writeXml($filename, $items);
-                    $sitemaps[] = $filename;
-                    $generatedFiles[] = $filename;
+                    $files = $this->writeChunkedXml('products', $items);
+                    $sitemaps = array_merge($sitemaps, $files);
+                    $generatedFiles = array_merge($generatedFiles, $files);
                 }
             }
 
-            // Generate category sitemap
+            // Generate category sitemaps (may be split into multiple files)
             if ($this->categoryGenerator->isEnabled($storeId)) {
                 $items = $this->categoryGenerator->generate($storeId);
                 if (!empty($items)) {
-                    $filename = $this->getPrefixedFilename($this->categoryGenerator->getFilename());
-                    $this->writeXml($filename, $items);
-                    $sitemaps[] = $filename;
-                    $generatedFiles[] = $filename;
+                    $files = $this->writeChunkedXml('categories', $items);
+                    $sitemaps = array_merge($sitemaps, $files);
+                    $generatedFiles = array_merge($generatedFiles, $files);
                 }
             }
 
-            // Generate CMS sitemap
+            // Generate CMS sitemaps (may be split into multiple files)
             if ($this->cmsGenerator->isEnabled($storeId)) {
                 $items = $this->cmsGenerator->generate($storeId);
                 if (!empty($items)) {
-                    $filename = $this->getPrefixedFilename($this->cmsGenerator->getFilename());
-                    $this->writeXml($filename, $items);
-                    $sitemaps[] = $filename;
-                    $generatedFiles[] = $filename;
+                    $files = $this->writeChunkedXml('cms', $items);
+                    $sitemaps = array_merge($sitemaps, $files);
+                    $generatedFiles = array_merge($generatedFiles, $files);
                 }
             }
 
@@ -136,6 +151,36 @@ class SitemapBuilder
         }
 
         return $generatedFiles;
+    }
+
+    /**
+     * Write items to chunked sitemap files if they exceed the limit
+     *
+     * @param string $type Type identifier (products, categories, cms)
+     * @param array $items All items to write
+     * @return array List of generated filenames
+     */
+    private function writeChunkedXml(string $type, array $items): array
+    {
+        $files = [];
+        $chunks = array_chunk($items, $this->maxUrlsPerSitemap);
+        $totalChunks = count($chunks);
+
+        foreach ($chunks as $index => $chunk) {
+            $partNumber = $index + 1;
+
+            // Only add number suffix if there are multiple parts
+            if ($totalChunks > 1) {
+                $filename = $this->getPrefixedFilename("sitemap-{$type}-{$partNumber}.xml");
+            } else {
+                $filename = $this->getPrefixedFilename("sitemap-{$type}.xml");
+            }
+
+            $this->writeXml($filename, $chunk);
+            $files[] = $filename;
+        }
+
+        return $files;
     }
 
     /**

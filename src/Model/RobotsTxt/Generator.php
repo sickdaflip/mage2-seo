@@ -108,7 +108,8 @@ class Generator
     }
 
     /**
-     * Get sitemap URLs for all active stores
+     * Get sitemap index URLs for all active stores
+     * Points to the main sitemap index which references all sub-sitemaps
      */
     private function getSitemapUrls(): array
     {
@@ -126,6 +127,7 @@ class Generator
 
             $storeCode = $store->getCode();
             $baseUrl = rtrim($store->getBaseUrl(), '/');
+            // Point to the sitemap index file (which contains all sub-sitemaps)
             $sitemapFile = $storeCode . '-sitemap.xml';
 
             $urls[] = $baseUrl . '/' . $sitemapFile;
