@@ -91,30 +91,46 @@ if ($mpn) {
     $structuredData['mpn'] = $mpn;
 }
 
-// Add offers
-$offer = [
-    '@type' => 'Offer',
-    'url' => $block->getProductUrl(),
-    'priceCurrency' => $block->getCurrencyCode(),
-    'price' => number_format($block->getProductPrice(), 2, '.', ''),
-    'availability' => $block->getAvailability(),
-    'itemCondition' => $block->getCondition(),
-    'seller' => $block->getSeller(),
-];
-
-// Add price validity dates
-if ($block->hasSpecialPrice()) {
-    // Special price is active
-    $toDate = $block->getSpecialPriceToDate();
-    if ($toDate) {
-        $offer['priceValidUntil'] = $toDate;
-    } else {
-        // No end date, use 1 year as default
-        $offer['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
-    }
+// Add offers - use AggregateOffer for price ranges (configurable, grouped, bundle, tier prices)
+if ($block->hasPriceRange()) {
+    // AggregateOffer for products with price range
+    $offer = [
+        '@type' => 'AggregateOffer',
+        'url' => $block->getProductUrl(),
+        'priceCurrency' => $block->getCurrencyCode(),
+        'lowPrice' => number_format($block->getLowPrice(), 2, '.', ''),
+        'highPrice' => number_format($block->getHighPrice(), 2, '.', ''),
+        'offerCount' => $block->getOfferCount(),
+        'availability' => $block->getAvailability(),
+        'itemCondition' => $block->getCondition(),
+        'seller' => $block->getSeller(),
+    ];
 } else {
-    // Regular price, use 1 year validity
-    $offer['priceValidUntil'] = $block->getPriceValidUntil();
+    // Regular Offer for simple products
+    $offer = [
+        '@type' => 'Offer',
+        'url' => $block->getProductUrl(),
+        'priceCurrency' => $block->getCurrencyCode(),
+        'price' => number_format($block->getProductPrice(), 2, '.', ''),
+        'availability' => $block->getAvailability(),
+        'itemCondition' => $block->getCondition(),
+        'seller' => $block->getSeller(),
+    ];
+
+    // Add price validity dates (only for single Offer)
+    if ($block->hasSpecialPrice()) {
+        // Special price is active
+        $toDate = $block->getSpecialPriceToDate();
+        if ($toDate) {
+            $offer['priceValidUntil'] = $toDate;
+        } else {
+            // No end date, use 1 year as default
+            $offer['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
+        }
+    } else {
+        // Regular price, use 1 year validity
+        $offer['priceValidUntil'] = $block->getPriceValidUntil();
+    }
 }
 
 // Add shipping details if configured

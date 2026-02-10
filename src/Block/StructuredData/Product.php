@@ -881,4 +881,213 @@ class Product extends \FlipDev\Seo\Block\Template
             'hasEnergyEfficiencyCategory' => $energyMap[$energyClass],
         ];
     }
+
+    /**
+     * Check if product has a price range (configurable, grouped, bundle, or tier prices)
+     *
+     * @return bool
+     */
+    public function hasPriceRange(): bool
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return false;
+        }
+
+        $productType = $product->getTypeId();
+
+        // Configurable, grouped, and bundle products typically have price ranges
+        if (in_array($productType, ['configurable', 'grouped', 'bundle'])) {
+            $range = $this->getPriceRange();
+            return $range['lowPrice'] < $range['highPrice'];
+        }
+
+        // Check for tier prices
+        $tierPrices = $product->getTierPrices();
+        if (!empty($tierPrices)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get price range for products with multiple prices
+     *
+     * @return array ['lowPrice' => float, 'highPrice' => float, 'offerCount' => int]
+     */
+    public function getPriceRange(): array
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return ['lowPrice' => 0, 'highPrice' => 0, 'offerCount' => 1];
+        }
+
+        $productType = $product->getTypeId();
+        $prices = [];
+        $offerCount = 1;
+
+        switch ($productType) {
+            case 'configurable':
+                $prices = $this->getConfigurablePriceRange($product);
+                $offerCount = count($prices) ?: 1;
+                break;
+
+            case 'grouped':
+                $prices = $this->getGroupedPriceRange($product);
+                $offerCount = count($prices) ?: 1;
+                break;
+
+            case 'bundle':
+                $minPrice = (float)$this->_bundlePrice->getTotalPrices($product, 'min', 1);
+                $maxPrice = (float)$this->_bundlePrice->getTotalPrices($product, 'max', 1);
+                $prices = [$minPrice, $maxPrice];
+                $offerCount = 2; // Bundle has min/max configuration
+                break;
+
+            default:
+                // Simple product - check for tier prices
+                $tierPrices = $this->getTierPriceRange($product);
+                if (!empty($tierPrices)) {
+                    $prices = $tierPrices;
+                    $offerCount = count($tierPrices);
+                } else {
+                    $prices = [(float)$product->getFinalPrice()];
+                }
+                break;
+        }
+
+        if (empty($prices)) {
+            $regularPrice = (float)$product->getFinalPrice();
+            return [
+                'lowPrice' => $this->getPriceWithTax($product, $regularPrice),
+                'highPrice' => $this->getPriceWithTax($product, $regularPrice),
+                'offerCount' => 1,
+            ];
+        }
+
+        $lowPrice = min($prices);
+        $highPrice = max($prices);
+
+        return [
+            'lowPrice' => $this->getPriceWithTax($product, $lowPrice),
+            'highPrice' => $this->getPriceWithTax($product, $highPrice),
+            'offerCount' => $offerCount,
+        ];
+    }
+
+    /**
+     * Get price range from configurable product children
+     *
+     * @param ProductInterface $product
+     * @return array
+     */
+    protected function getConfigurablePriceRange($product): array
+    {
+        $prices = [];
+
+        try {
+            /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $typeInstance */
+            $typeInstance = $product->getTypeInstance();
+            $children = $typeInstance->getUsedProducts($product);
+
+            foreach ($children as $child) {
+                if ($child->isSaleable()) {
+                    $prices[] = (float)$child->getFinalPrice();
+                }
+            }
+        } catch (\Exception $e) {
+            // Fallback to product price
+            $prices[] = (float)$product->getFinalPrice();
+        }
+
+        return $prices;
+    }
+
+    /**
+     * Get price range from grouped product children
+     *
+     * @param ProductInterface $product
+     * @return array
+     */
+    protected function getGroupedPriceRange($product): array
+    {
+        $prices = [];
+
+        try {
+            /** @var \Magento\GroupedProduct\Model\Product\Type\Grouped $typeInstance */
+            $typeInstance = $product->getTypeInstance();
+            $children = $typeInstance->getAssociatedProducts($product);
+
+            foreach ($children as $child) {
+                if ($child->isSaleable()) {
+                    $prices[] = (float)$child->getFinalPrice();
+                }
+            }
+        } catch (\Exception $e) {
+            // Fallback to product price
+            $prices[] = (float)$product->getFinalPrice();
+        }
+
+        return $prices;
+    }
+
+    /**
+     * Get tier price range for a product
+     *
+     * @param ProductInterface $product
+     * @return array
+     */
+    protected function getTierPriceRange($product): array
+    {
+        $prices = [];
+        $tierPrices = $product->getTierPrices();
+
+        if (empty($tierPrices)) {
+            return $prices;
+        }
+
+        // Add regular price
+        $prices[] = (float)$product->getPrice();
+
+        // Add all tier prices
+        foreach ($tierPrices as $tierPrice) {
+            $prices[] = (float)$tierPrice->getValue();
+        }
+
+        return $prices;
+    }
+
+    /**
+     * Get the lowest price (for AggregateOffer)
+     *
+     * @return float
+     */
+    public function getLowPrice(): float
+    {
+        $range = $this->getPriceRange();
+        return $range['lowPrice'];
+    }
+
+    /**
+     * Get the highest price (for AggregateOffer)
+     *
+     * @return float
+     */
+    public function getHighPrice(): float
+    {
+        $range = $this->getPriceRange();
+        return $range['highPrice'];
+    }
+
+    /**
+     * Get offer count for AggregateOffer
+     *
+     * @return int
+     */
+    public function getOfferCount(): int
+    {
+        $range = $this->getPriceRange();
+        return $range['offerCount'];
+    }
 }
