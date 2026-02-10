@@ -1,0 +1,40 @@
+<?php
+/** @var \FlipDev\Seo\Block\Adminhtml\System\Config\GenerateRobots $block */
+?>
+<div>
+    <?= $block->getButtonHtml() ?>
+    <span id="flipdev_seo_robots_message" style="margin-left: 10px;"></span>
+</div>
+<script type="text/javascript">
+    require(['jquery'], function($) {
+        $('#flipdev_seo_generate_robots').on('click', function() {
+            var $button = $(this);
+            var $message = $('#flipdev_seo_robots_message');
+
+            $button.prop('disabled', true);
+            $message.text('Generating...').css('color', '#666');
+
+            $.ajax({
+                url: '<?= $block->escapeUrl($block->getAjaxUrl()) ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    form_key: FORM_KEY
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $message.text(response.message).css('color', 'green');
+                    } else {
+                        $message.text(response.message || 'Error generating robots.txt').css('color', 'red');
+                    }
+                },
+                error: function() {
+                    $message.text('Error generating robots.txt').css('color', 'red');
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>

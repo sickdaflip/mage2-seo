@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright (c) 2025 Flipdev. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="flipdev_seo_generate_sitemap" instance="FlipDev\Seo\Cron\GenerateSitemap" method="execute">
+            <config_path>crontab/default/jobs/flipdev_seo_generate_sitemap/schedule/cron_expr</config_path>
+        </job>
+    </group>
+</config>

@@ -1,7 +1,27 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
+            <!-- Product Meta (Hyvä-compatible alternative to Observer) -->
+            <block class="FlipDev\Seo\Block\ProductMeta" name="flipdevseo.productmeta" ifconfig="flipdev_seo/metadata/product_title_enabled" />
+            <!-- Twitter Cards -->
             <block class="FlipDev\Seo\Block\StructuredData\TwitterCards" name="flipdevseo.twittercards" template="FlipDev_Seo::structureddata/twittercards.phtml" ifconfig="flipdev_seo/twittercards/enabled" />
+            <!-- Breadcrumbs Structured Data -->
+            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd.breadcrumbs.wrapper" template="FlipDev_Seo::structureddata/js.phtml" ifconfig="flipdev_seo/breadcrumbs_sd/enabled">
+                <block class="FlipDev\Seo\Block\StructuredData\Breadcrumbs" name="flipdevseo.sd.breadcrumbs" template="FlipDev_Seo::structureddata/breadcrumbs.phtml" />
+            </block>
+            <!-- FAQ Structured Data -->
+            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd.faq.wrapper" template="FlipDev_Seo::structureddata/js.phtml" ifconfig="flipdev_seo/faq_sd/enabled">
+                <block class="FlipDev\Seo\Block\StructuredData\Faq" name="flipdevseo.sd.faq" template="FlipDev_Seo::structureddata/faq.phtml" />
+            </block>
+        </referenceBlock>
+        <!-- Set OpenGraph type to product -->
+        <referenceBlock name="flipdevseo.opengraph">
+            <action method="setPageType">
+                <argument name="type" xsi:type="string">product</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="flipdevseo.sd">
+            <block class="FlipDev\Seo\Block\StructuredData\Product" name="flipdevseo.sd.product" template="FlipDev_Seo::structureddata/product.phtml" ifconfig="flipdev_seo/product_sd/enabled" />
         </referenceBlock>
         <referenceBlock name="footer">
             <block class="FlipDev\Seo\Block\Template" name="flipdevseo.content.grouping" template="FlipDev_Seo::google/content-grouping.phtml" ifconfig="flipdev_seo/google_content_grouping/product">

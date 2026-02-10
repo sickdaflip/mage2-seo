@@ -1,10 +1,25 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="head.additional">
+            <!-- Organization Structured Data -->
             <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd"
                    template="FlipDev_Seo::structureddata/js.phtml" before="-">
                 <block class="FlipDev\Seo\Block\StructuredData\Organization" name="flipdevseo.sd.organization" template="FlipDev_Seo::structureddata/organization.phtml" ifconfig="flipdev_seo/organization_sd/enabled" />
             </block>
+            <!-- WebSite Structured Data -->
+            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd.website.wrapper"
+                   template="FlipDev_Seo::structureddata/js.phtml" ifconfig="flipdev_seo/website_sd/enabled">
+                <block class="FlipDev\Seo\Block\StructuredData\WebSite" name="flipdevseo.sd.website" template="FlipDev_Seo::structureddata/website.phtml" />
+            </block>
+            <!-- LocalBusiness Structured Data -->
+            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd.localbusiness.wrapper"
+                   template="FlipDev_Seo::structureddata/js.phtml" ifconfig="flipdev_seo/localbusiness_sd/enabled">
+                <block class="FlipDev\Seo\Block\StructuredData\LocalBusiness" name="flipdevseo.sd.localbusiness" template="FlipDev_Seo::structureddata/localbusiness.phtml" />
+            </block>
+            <!-- OpenGraph Meta Tags -->
+            <block class="FlipDev\Seo\Block\OpenGraph" name="flipdevseo.opengraph" template="FlipDev_Seo::opengraph.phtml" ifconfig="flipdev_seo/opengraph/enabled" />
+            <!-- Hreflang Tags -->
+            <block class="FlipDev\Seo\Block\Hreflang" name="flipdevseo.hreflang" template="FlipDev_Seo::hreflang.phtml" ifconfig="flipdev_seo/hreflang/enabled" />
         </referenceBlock>
         <referenceBlock name="footer_links">
             <block class="Magento\Framework\View\Element\Html\Link\Current" name="sitemap-link">

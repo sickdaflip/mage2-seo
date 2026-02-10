@@ -1,0 +1,176 @@
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\StructuredData\Product $block */
+
+$product = $block->getProduct();
+if (!$product) {
+    return;
+}
+
+$structuredData = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $block->getProductName(),
+    'description' => $block->getProductDescription(),
+    'sku' => $block->getProductSku(),
+    'url' => $block->getProductUrl(),
+];
+
+// Add dateModified
+$dateModified = $block->getDateModified();
+if ($dateModified) {
+    $structuredData['dateModified'] = $dateModified;
+}
+
+// Add images (single or multiple)
+$images = $block->getProductImages();
+if (!empty($images)) {
+    $structuredData['image'] = count($images) === 1 ? $images[0] : $images;
+}
+
+// Add brand if available
+$brand = $block->getBrand();
+if ($brand) {
+    $structuredData['brand'] = [
+        '@type' => 'Brand',
+        'name' => $brand,
+    ];
+}
+
+// Add category if available
+$category = $block->getCategoryName();
+if ($category) {
+    $structuredData['category'] = $category;
+}
+
+// Add color if available
+$color = $block->getColor();
+if ($color) {
+    $structuredData['color'] = $color;
+}
+
+// Add material if available
+$material = $block->getMaterial();
+if ($material) {
+    $structuredData['material'] = $material;
+}
+
+// Add weight if available
+$weight = $block->getProductWeight();
+if ($weight) {
+    $structuredData['weight'] = $weight;
+}
+
+// Add energy efficiency (EU Energy Label) if available
+$energyEfficiency = $block->getEnergyEfficiency();
+if ($energyEfficiency) {
+    $structuredData['hasEnergyConsumptionDetails'] = $energyEfficiency;
+}
+
+// Add GTIN if available
+$gtin = $block->getGtin();
+if ($gtin) {
+    $gtinLength = strlen($gtin);
+    if ($gtinLength === 8) {
+        $structuredData['gtin8'] = $gtin;
+    } elseif ($gtinLength === 12) {
+        $structuredData['gtin12'] = $gtin;
+    } elseif ($gtinLength === 13) {
+        $structuredData['gtin13'] = $gtin;
+    } elseif ($gtinLength === 14) {
+        $structuredData['gtin14'] = $gtin;
+    } else {
+        $structuredData['gtin'] = $gtin;
+    }
+}
+
+// Add MPN if available
+$mpn = $block->getMpn();
+if ($mpn) {
+    $structuredData['mpn'] = $mpn;
+}
+
+// Add offers - use AggregateOffer for price ranges (configurable, grouped, bundle, tier prices)
+if ($block->hasPriceRange()) {
+    // AggregateOffer for products with price range
+    $offer = [
+        '@type' => 'AggregateOffer',
+        'url' => $block->getProductUrl(),
+        'priceCurrency' => $block->getCurrencyCode(),
+        'lowPrice' => number_format($block->getLowPrice(), 2, '.', ''),
+        'highPrice' => number_format($block->getHighPrice(), 2, '.', ''),
+        'offerCount' => $block->getOfferCount(),
+        'availability' => $block->getAvailability(),
+        'itemCondition' => $block->getCondition(),
+        'seller' => $block->getSeller(),
+    ];
+} else {
+    // Regular Offer for simple products
+    $offer = [
+        '@type' => 'Offer',
+        'url' => $block->getProductUrl(),
+        'priceCurrency' => $block->getCurrencyCode(),
+        'price' => number_format($block->getProductPrice(), 2, '.', ''),
+        'availability' => $block->getAvailability(),
+        'itemCondition' => $block->getCondition(),
+        'seller' => $block->getSeller(),
+    ];
+
+    // Add price validity dates (only for single Offer)
+    if ($block->hasSpecialPrice()) {
+        // Special price is active
+        $toDate = $block->getSpecialPriceToDate();
+        if ($toDate) {
+            $offer['priceValidUntil'] = $toDate;
+        } else {
+            // No end date, use 1 year as default
+            $offer['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
+        }
+    } else {
+        // Regular price, use 1 year validity
+        $offer['priceValidUntil'] = $block->getPriceValidUntil();
+    }
+}
+
+// Add shipping details if configured
+$shippingDetails = $block->getShippingDetails();
+if ($shippingDetails) {
+    $offer['shippingDetails'] = $shippingDetails;
+}
+
+// Add return policy if configured
+$returnPolicy = $block->getReturnPolicy();
+if ($returnPolicy) {
+    $offer['hasMerchantReturnPolicy'] = $returnPolicy;
+}
+
+$structuredData['offers'] = $offer;
+
+// Add videos if available (YouTube, Vimeo from product gallery)
+if ($block->hasVideos()) {
+    $videos = $block->getProductVideos();
+    if (count($videos) === 1) {
+        $structuredData['video'] = $videos[0];
+    } else {
+        $structuredData['video'] = $videos;
+    }
+}
+
+// Add aggregate rating if reviews exist
+if ($block->hasReviews()) {
+    $ratingValue = $block->getRatingValue();
+    $reviewCount = $block->getReviewCount();
+
+    if ($ratingValue && $reviewCount) {
+        $structuredData['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => $ratingValue,
+            'bestRating' => 5,
+            'worstRating' => 1,
+            'reviewCount' => $reviewCount,
+        ];
+    }
+}
+
+echo json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

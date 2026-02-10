@@ -41,6 +41,59 @@
             <logo_sd>
                 <enabled>1</enabled>
             </logo_sd>
+            <breadcrumbs_sd>
+                <enabled>1</enabled>
+            </breadcrumbs_sd>
+            <website_sd>
+                <enabled>1</enabled>
+                <sitelinks_searchbox>1</sitelinks_searchbox>
+            </website_sd>
+            <category_sd>
+                <enabled>1</enabled>
+            </category_sd>
+            <faq_sd>
+                <enabled>0</enabled>
+            </faq_sd>
+            <localbusiness_sd>
+                <enabled>0</enabled>
+                <type>Store</type>
+            </localbusiness_sd>
+            <hreflang>
+                <enabled>0</enabled>
+            </hreflang>
+            <xml_sitemap>
+                <enabled>0</enabled>
+                <product_enabled>1</product_enabled>
+                <product_images>1</product_images>
+                <product_videos>1</product_videos>
+                <product_priority>1.0</product_priority>
+                <product_changefreq>weekly</product_changefreq>
+                <category_enabled>1</category_enabled>
+                <category_priority>0.8</category_priority>
+                <category_changefreq>weekly</category_changefreq>
+                <cms_enabled>1</cms_enabled>
+                <cms_priority>0.5</cms_priority>
+                <cms_changefreq>monthly</cms_changefreq>
+                <hreflang_enabled>0</hreflang_enabled>
+                <exclude_out_of_stock>0</exclude_out_of_stock>
+                <exclude_disabled>1</exclude_disabled>
+                <exclude_not_visible>1</exclude_not_visible>
+                <max_urls_per_sitemap>50000</max_urls_per_sitemap>
+                <cron_enabled>1</cron_enabled>
+                <cron_hour>3</cron_hour>
+            </xml_sitemap>
+            <robots_txt>
+                <enabled>0</enabled>
+                <content><![CDATA[User-agent: *
+Disallow: /checkout/
+Disallow: /customer/
+Disallow: /catalogsearch/
+Disallow: /wishlist/
+Disallow: /sendfriend/
+Disallow: /*?
+]]></content>
+                <auto_sitemap>1</auto_sitemap>
+            </robots_txt>
             <google_content_grouping>
                 <enabled>0</enabled>
             </google_content_grouping>

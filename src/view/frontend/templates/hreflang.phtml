@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+
+/** @var \FlipDev\Seo\Block\Hreflang $block */
+
+if (!$block->hasMultipleStores()) {
+    return;
+}
+
+$links = $block->getHreflangLinks();
+if (empty($links)) {
+    return;
+}
+?>
+<?php foreach ($links as $link): ?>
+<link rel="alternate" hreflang="<?= $block->escapeHtmlAttr($link['hreflang']) ?>" href="<?= $block->escapeUrl($link['href']) ?>" />
+<?php endforeach; ?>
