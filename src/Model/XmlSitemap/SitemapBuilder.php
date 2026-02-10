@@ -23,6 +23,7 @@ class SitemapBuilder
 
     private WriteInterface $directory;
     private string $xslUrl = '';
+    private string $storeCode = '';
 
     public function __construct(
         private ScopeConfigInterface $scopeConfig,
@@ -50,6 +51,27 @@ class SitemapBuilder
     }
 
     /**
+     * Get store code for filename prefix
+     */
+    private function getStoreCode(int $storeId): string
+    {
+        try {
+            $store = $this->storeManager->getStore($storeId);
+            return $store->getCode();
+        } catch (\Exception $e) {
+            return 'store' . $storeId;
+        }
+    }
+
+    /**
+     * Get prefixed filename with store code
+     */
+    private function getPrefixedFilename(string $filename): string
+    {
+        return $this->storeCode . '-' . $filename;
+    }
+
+    /**
      * Generate all sitemaps for a store
      */
     public function generateForStore(int $storeId): array
@@ -62,13 +84,14 @@ class SitemapBuilder
         $sitemaps = [];
 
         try {
+            $this->storeCode = $this->getStoreCode($storeId);
             $this->xslUrl = $this->getXslUrl($storeId);
 
             // Generate product sitemap
             if ($this->productGenerator->isEnabled($storeId)) {
                 $items = $this->productGenerator->generate($storeId);
                 if (!empty($items)) {
-                    $filename = $this->productGenerator->getFilename();
+                    $filename = $this->getPrefixedFilename($this->productGenerator->getFilename());
                     $this->writeXml($filename, $items);
                     $sitemaps[] = $filename;
                     $generatedFiles[] = $filename;
@@ -79,7 +102,7 @@ class SitemapBuilder
             if ($this->categoryGenerator->isEnabled($storeId)) {
                 $items = $this->categoryGenerator->generate($storeId);
                 if (!empty($items)) {
-                    $filename = $this->categoryGenerator->getFilename();
+                    $filename = $this->getPrefixedFilename($this->categoryGenerator->getFilename());
                     $this->writeXml($filename, $items);
                     $sitemaps[] = $filename;
                     $generatedFiles[] = $filename;
@@ -90,7 +113,7 @@ class SitemapBuilder
             if ($this->cmsGenerator->isEnabled($storeId)) {
                 $items = $this->cmsGenerator->generate($storeId);
                 if (!empty($items)) {
-                    $filename = $this->cmsGenerator->getFilename();
+                    $filename = $this->getPrefixedFilename($this->cmsGenerator->getFilename());
                     $this->writeXml($filename, $items);
                     $sitemaps[] = $filename;
                     $generatedFiles[] = $filename;
@@ -99,8 +122,9 @@ class SitemapBuilder
 
             // Generate sitemap index
             if (!empty($sitemaps)) {
-                $this->writeSitemapIndex($sitemaps, $storeId);
-                $generatedFiles[] = 'sitemap.xml';
+                $indexFilename = $this->getPrefixedFilename('sitemap.xml');
+                $this->writeSitemapIndex($sitemaps, $storeId, $indexFilename);
+                $generatedFiles[] = $indexFilename;
             }
 
         } catch (\Exception $e) {
@@ -217,7 +241,7 @@ class SitemapBuilder
     /**
      * Write sitemap index file
      */
-    private function writeSitemapIndex(array $sitemaps, int $storeId): void
+    private function writeSitemapIndex(array $sitemaps, int $storeId, string $filename = 'sitemap.xml'): void
     {
         $baseUrl = $this->getBaseUrl($storeId);
 
@@ -245,7 +269,7 @@ class SitemapBuilder
         $xml->endElement(); // sitemapindex
         $xml->endDocument();
 
-        $this->directory->writeFile('sitemap.xml', $xml->outputMemory());
+        $this->directory->writeFile($filename, $xml->outputMemory());
     }
 
     /**
