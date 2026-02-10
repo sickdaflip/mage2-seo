@@ -21,6 +21,7 @@ class ProductGenerator extends AbstractGenerator
     protected const CONFIG_PATH_PRIORITY = 'flipdev_seo/xml_sitemap/product_priority';
     protected const CONFIG_PATH_CHANGEFREQ = 'flipdev_seo/xml_sitemap/product_changefreq';
     protected const CONFIG_PATH_IMAGES = 'flipdev_seo/xml_sitemap/product_images';
+    protected const CONFIG_PATH_VIDEOS = 'flipdev_seo/xml_sitemap/product_videos';
     protected const CONFIG_PATH_EXCLUDE_OOS = 'flipdev_seo/xml_sitemap/exclude_out_of_stock';
     protected const CONFIG_PATH_EXCLUDE_DISABLED = 'flipdev_seo/xml_sitemap/exclude_disabled';
     protected const CONFIG_PATH_EXCLUDE_NOT_VISIBLE = 'flipdev_seo/xml_sitemap/exclude_not_visible';
@@ -51,6 +52,7 @@ class ProductGenerator extends AbstractGenerator
         $items = [];
         $collection = $this->getProductCollection($storeId);
         $includeImages = $this->includeImages($storeId);
+        $includeVideos = $this->includeVideos($storeId);
         $includeHreflang = $this->includeHreflang($storeId);
         $priority = $this->getPriority($storeId);
         $changefreq = $this->getChangefreq($storeId);
@@ -65,6 +67,13 @@ class ProductGenerator extends AbstractGenerator
 
             if ($includeImages) {
                 $item['images'] = $this->getProductImages($product);
+            }
+
+            if ($includeVideos) {
+                $videos = $this->getProductVideos($product);
+                if (!empty($videos)) {
+                    $item['videos'] = $videos;
+                }
             }
 
             if ($includeHreflang) {
@@ -85,8 +94,11 @@ class ProductGenerator extends AbstractGenerator
         $collection = $this->productCollectionFactory->create();
         $collection->setStoreId($storeId);
         $collection->addStoreFilter($storeId);
-        $collection->addAttributeToSelect(['name', 'updated_at', 'image', 'small_image', 'thumbnail']);
+        $collection->addAttributeToSelect(['name', 'updated_at', 'image', 'small_image', 'thumbnail', 'short_description']);
         $collection->addUrlRewrite();
+
+        // Load media gallery data for images and videos
+        $collection->addMediaGalleryData();
 
         // Exclude disabled products
         if ($this->scopeConfig->isSetFlag(self::CONFIG_PATH_EXCLUDE_DISABLED, ScopeInterface::SCOPE_STORE, $storeId)) {
@@ -228,5 +240,98 @@ class ProductGenerator extends AbstractGenerator
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Check if videos should be included
+     */
+    private function includeVideos(int $storeId): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_PATH_VIDEOS,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
+     * Get product videos for sitemap (YouTube/Vimeo)
+     */
+    private function getProductVideos($product): array
+    {
+        $videos = [];
+
+        try {
+            // Get all media gallery items (includes videos)
+            $mediaGallery = $product->getMediaGallery('images');
+
+            if (!$mediaGallery || !is_array($mediaGallery)) {
+                return $videos;
+            }
+
+            foreach ($mediaGallery as $entry) {
+                // Check if this is an external video
+                if (!isset($entry['media_type']) || $entry['media_type'] !== 'external-video') {
+                    continue;
+                }
+
+                // Get video URL from the entry
+                $videoUrl = $entry['video_url'] ?? null;
+
+                if (!$videoUrl) {
+                    continue;
+                }
+
+                // Extract video info
+                $videoData = $this->parseVideoUrl($videoUrl);
+                if (!$videoData) {
+                    continue;
+                }
+
+                // Get video title and description
+                $videoTitle = $entry['video_title'] ?? $entry['label'] ?? $product->getName();
+                $videoDescription = $entry['video_description'] ?? $product->getShortDescription() ?: $product->getName();
+
+                // Truncate description to 2048 chars (Google limit)
+                $videoDescription = mb_substr(strip_tags((string)$videoDescription), 0, 2048);
+
+                $videos[] = [
+                    'thumbnail_loc' => $videoData['thumbnail'],
+                    'title' => $videoTitle,
+                    'description' => $videoDescription,
+                    'player_loc' => $videoData['player_url'],
+                ];
+            }
+        } catch (\Exception $e) {
+            // Return empty array on error
+        }
+
+        return $videos;
+    }
+
+    /**
+     * Parse video URL and return thumbnail and player URLs
+     */
+    private function parseVideoUrl(string $url): ?array
+    {
+        // YouTube patterns
+        if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $url, $matches)) {
+            $videoId = $matches[1];
+            return [
+                'thumbnail' => 'https://img.youtube.com/vi/' . $videoId . '/maxresdefault.jpg',
+                'player_url' => 'https://www.youtube.com/embed/' . $videoId,
+            ];
+        }
+
+        // Vimeo patterns
+        if (preg_match('/vimeo\.com\/(?:video\/)?(\d+)/', $url, $matches)) {
+            $videoId = $matches[1];
+            return [
+                'thumbnail' => 'https://vumbnail.com/' . $videoId . '.jpg',
+                'player_url' => 'https://player.vimeo.com/video/' . $videoId,
+            ];
+        }
+
+        return null;
     }
 }

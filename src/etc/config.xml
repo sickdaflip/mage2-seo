@@ -65,6 +65,7 @@
                 <enabled>0</enabled>
                 <product_enabled>1</product_enabled>
                 <product_images>1</product_images>
+                <product_videos>1</product_videos>
                 <product_priority>1.0</product_priority>
                 <product_changefreq>weekly</product_changefreq>
                 <category_enabled>1</category_enabled>

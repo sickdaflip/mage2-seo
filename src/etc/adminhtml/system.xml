@@ -623,7 +623,16 @@
                 <field id="product_images" translate="label" type="select" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Include Product Images?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[Adds image:image tags for Google Image Search.]]></comment>
+                    <comment><![CDATA[Adds all product gallery images (image:image tags) for Google Image Search.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="product_enabled">1</field>
+                    </depends>
+                </field>
+                <field id="product_videos" translate="label" type="select" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Include Product Videos?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Adds video:video tags for YouTube/Vimeo videos in product gallery.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                         <field id="product_enabled">1</field>

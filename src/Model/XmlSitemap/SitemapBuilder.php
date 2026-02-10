@@ -232,6 +232,7 @@ class SitemapBuilder
         $xml->startElement('urlset');
         $xml->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $xml->writeAttribute('xmlns:image', 'http://www.google.com/schemas/sitemap-image/1.1');
+        $xml->writeAttribute('xmlns:video', 'http://www.google.com/schemas/sitemap-video/1.1');
         $xml->writeAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
 
         foreach ($items as $item) {
@@ -260,6 +261,23 @@ class SitemapBuilder
                         $xml->writeElement('image:title', $image['title']);
                     }
                     $xml->endElement(); // image:image
+                }
+            }
+
+            // Add videos
+            if (!empty($item['videos'])) {
+                foreach ($item['videos'] as $video) {
+                    $xml->startElement('video:video');
+                    $xml->writeElement('video:thumbnail_loc', $video['thumbnail_loc']);
+                    $xml->writeElement('video:title', $video['title']);
+                    $xml->writeElement('video:description', $video['description']);
+                    if (!empty($video['player_loc'])) {
+                        $xml->startElement('video:player_loc');
+                        $xml->writeAttribute('allow_embed', 'yes');
+                        $xml->text($video['player_loc']);
+                        $xml->endElement(); // video:player_loc
+                    }
+                    $xml->endElement(); // video:video
                 }
             }
 
@@ -372,6 +390,7 @@ class SitemapBuilder
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9"
                 xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+                xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <xsl:output method="html" encoding="UTF-8" indent="yes"/>
     <xsl:template match="/">
@@ -400,14 +419,15 @@ class SitemapBuilder
         </tbody></table>
     </xsl:template>
     <xsl:template match="sitemap:urlset">
-        <div class="stats"><div class="stat-box"><div class="number"><xsl:value-of select="count(sitemap:url)"/></div><div class="label">URLs</div></div><xsl:if test="sitemap:url/image:image"><div class="stat-box"><div class="number"><xsl:value-of select="count(sitemap:url/image:image)"/></div><div class="label">Images</div></div></xsl:if></div>
-        <table><thead><tr><th>URL</th><xsl:if test="sitemap:url/sitemap:priority"><th style="width:80px">Priority</th></xsl:if><xsl:if test="sitemap:url/sitemap:changefreq"><th style="width:100px">Change Freq</th></xsl:if><xsl:if test="sitemap:url/sitemap:lastmod"><th style="width:120px">Last Modified</th></xsl:if><xsl:if test="sitemap:url/image:image"><th style="width:80px">Images</th></xsl:if></tr></thead><tbody>
+        <div class="stats"><div class="stat-box"><div class="number"><xsl:value-of select="count(sitemap:url)"/></div><div class="label">URLs</div></div><xsl:if test="sitemap:url/image:image"><div class="stat-box"><div class="number"><xsl:value-of select="count(sitemap:url/image:image)"/></div><div class="label">Images</div></div></xsl:if><xsl:if test="sitemap:url/video:video"><div class="stat-box"><div class="number"><xsl:value-of select="count(sitemap:url/video:video)"/></div><div class="label">Videos</div></div></xsl:if></div>
+        <table><thead><tr><th>URL</th><xsl:if test="sitemap:url/sitemap:priority"><th style="width:80px">Priority</th></xsl:if><xsl:if test="sitemap:url/sitemap:changefreq"><th style="width:100px">Change Freq</th></xsl:if><xsl:if test="sitemap:url/sitemap:lastmod"><th style="width:120px">Last Modified</th></xsl:if><xsl:if test="sitemap:url/image:image"><th style="width:80px">Images</th></xsl:if><xsl:if test="sitemap:url/video:video"><th style="width:80px">Videos</th></xsl:if></tr></thead><tbody>
             <xsl:for-each select="sitemap:url"><tr>
                 <td class="url-cell"><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a><xsl:if test="xhtml:link"><div class="hreflang-list"><xsl:for-each select="xhtml:link[@rel=&apos;alternate&apos;]"><span><xsl:value-of select="@hreflang"/></span></xsl:for-each></div></xsl:if></td>
                 <xsl:if test="../sitemap:url/sitemap:priority"><td class="priority"><xsl:value-of select="sitemap:priority"/></td></xsl:if>
                 <xsl:if test="../sitemap:url/sitemap:changefreq"><td><xsl:value-of select="sitemap:changefreq"/></td></xsl:if>
                 <xsl:if test="../sitemap:url/sitemap:lastmod"><td><xsl:value-of select="substring(sitemap:lastmod,1,10)"/></td></xsl:if>
                 <xsl:if test="../sitemap:url/image:image"><td style="text-align:center"><xsl:if test="image:image"><span class="images-count"><xsl:value-of select="count(image:image)"/></span></xsl:if></td></xsl:if>
+                <xsl:if test="../sitemap:url/video:video"><td style="text-align:center"><xsl:if test="video:video"><span class="images-count" style="background:#e94560"><xsl:value-of select="count(video:video)"/></span></xsl:if></td></xsl:if>
             </tr></xsl:for-each>
         </tbody></table>
     </xsl:template>
