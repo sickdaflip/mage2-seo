@@ -1090,4 +1090,138 @@ class Product extends \FlipDev\Seo\Block\Template
         $range = $this->getPriceRange();
         return $range['offerCount'];
     }
+
+    /**
+     * Check if product has videos in gallery
+     *
+     * @return bool
+     */
+    public function hasVideos(): bool
+    {
+        $videos = $this->getProductVideos();
+        return !empty($videos);
+    }
+
+    /**
+     * Get product videos from gallery as VideoObject schema
+     *
+     * @return array
+     */
+    public function getProductVideos(): array
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return [];
+        }
+
+        $videos = [];
+        $mediaGallery = $product->getMediaGalleryEntries();
+
+        if (!$mediaGallery) {
+            return [];
+        }
+
+        foreach ($mediaGallery as $mediaEntry) {
+            // Check if this is an external video
+            if ($mediaEntry->getMediaType() !== 'external-video') {
+                continue;
+            }
+
+            $videoData = $mediaEntry->getExtensionAttributes()?->getVideoContent();
+            if (!$videoData) {
+                continue;
+            }
+
+            $videoUrl = $videoData->getVideoUrl();
+            if (!$videoUrl) {
+                continue;
+            }
+
+            $video = $this->buildVideoObject($videoData, $videoUrl, $product);
+            if ($video) {
+                $videos[] = $video;
+            }
+        }
+
+        return $videos;
+    }
+
+    /**
+     * Build VideoObject schema from video data
+     *
+     * @param mixed $videoData
+     * @param string $videoUrl
+     * @param ProductInterface $product
+     * @return array|null
+     */
+    protected function buildVideoObject($videoData, string $videoUrl, $product): ?array
+    {
+        $videoObject = [
+            '@type' => 'VideoObject',
+            'name' => $videoData->getVideoTitle() ?: $product->getName(),
+            'description' => $videoData->getVideoDescription() ?: $this->getProductDescription(),
+            'uploadDate' => $product->getCreatedAt() ? date('Y-m-d', strtotime($product->getCreatedAt())) : date('Y-m-d'),
+        ];
+
+        // Handle YouTube URLs
+        $youtubeId = $this->extractYoutubeId($videoUrl);
+        if ($youtubeId) {
+            $videoObject['thumbnailUrl'] = 'https://img.youtube.com/vi/' . $youtubeId . '/maxresdefault.jpg';
+            $videoObject['embedUrl'] = 'https://www.youtube.com/embed/' . $youtubeId;
+            $videoObject['contentUrl'] = 'https://www.youtube.com/watch?v=' . $youtubeId;
+            return $videoObject;
+        }
+
+        // Handle Vimeo URLs
+        $vimeoId = $this->extractVimeoId($videoUrl);
+        if ($vimeoId) {
+            $videoObject['embedUrl'] = 'https://player.vimeo.com/video/' . $vimeoId;
+            $videoObject['contentUrl'] = 'https://vimeo.com/' . $vimeoId;
+            // Vimeo thumbnails require API call, skip for now
+            return $videoObject;
+        }
+
+        // Generic video URL
+        $videoObject['contentUrl'] = $videoUrl;
+        return $videoObject;
+    }
+
+    /**
+     * Extract YouTube video ID from URL
+     *
+     * @param string $url
+     * @return string|null
+     */
+    protected function extractYoutubeId(string $url): ?string
+    {
+        $patterns = [
+            '/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/',
+            '/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/',
+            '/youtu\.be\/([a-zA-Z0-9_-]+)/',
+            '/youtube\.com\/v\/([a-zA-Z0-9_-]+)/',
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $url, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract Vimeo video ID from URL
+     *
+     * @param string $url
+     * @return string|null
+     */
+    protected function extractVimeoId(string $url): ?string
+    {
+        if (preg_match('/vimeo\.com\/(\d+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
 }

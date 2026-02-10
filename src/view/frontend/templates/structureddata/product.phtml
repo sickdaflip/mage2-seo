@@ -147,6 +147,16 @@ if ($returnPolicy) {
 
 $structuredData['offers'] = $offer;
 
+// Add videos if available (YouTube, Vimeo from product gallery)
+if ($block->hasVideos()) {
+    $videos = $block->getProductVideos();
+    if (count($videos) === 1) {
+        $structuredData['video'] = $videos[0];
+    } else {
+        $structuredData['video'] = $videos;
+    }
+}
+
 // Add aggregate rating if reviews exist
 if ($block->hasReviews()) {
     $ratingValue = $block->getRatingValue();
