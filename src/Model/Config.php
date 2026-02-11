@@ -77,7 +77,16 @@ class Config implements ConfigInterface
      */
     public function isNoIndexForFilteredCategoriesEnabled(): bool
     {
-        return $this->isEnabled(self::XML_PATH_SETTINGS . 'noindexparams');
+        return !empty($this->getValue(self::XML_PATH_SETTINGS . 'noindexparams'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFilteredCategoryRobots(): ?string
+    {
+        $value = $this->getValue(self::XML_PATH_SETTINGS . 'noindexparams');
+        return !empty($value) ? $value : null;
     }
 
     /**

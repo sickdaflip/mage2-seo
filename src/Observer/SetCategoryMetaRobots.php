@@ -60,8 +60,9 @@ class SetCategoryMetaRobots implements ObserverInterface
                 return;
             }
 
-            // Check if NOINDEX for filtered pages is enabled
-            if (!$this->seoHelper->getConfig('flipdev_seo/settings/noindexparams')) {
+            // Get configured robots value for filtered pages (empty = disabled)
+            $robotsValue = $this->seoHelper->getConfig('flipdev_seo/settings/noindexparams');
+            if (!$robotsValue) {
                 return;
             }
 
@@ -78,11 +79,12 @@ class SetCategoryMetaRobots implements ObserverInterface
             // Remove pagination parameter - pagination should be indexed
             unset($queryParams['p']);
 
-            // If there are still other parameters (filters, sorting), set NOINDEX
+            // If there are still other parameters (filters, sorting), set configured robots value
             if (!empty($queryParams)) {
-                $this->pageConfig->setRobots('NOINDEX,FOLLOW');
+                $this->pageConfig->setRobots($robotsValue);
 
-                $this->logger->debug('FlipDev_Seo: Set NOINDEX for filtered/sorted category', [
+                $this->logger->debug('FlipDev_Seo: Set robots for filtered/sorted category', [
+                    'robots' => $robotsValue,
                     'params' => array_keys($queryParams)
                 ]);
             }

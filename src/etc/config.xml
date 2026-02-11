@@ -2,7 +2,7 @@
     <default>
         <flipdev_seo>
             <settings>
-                <noindexparams>1</noindexparams>
+                <noindexparams>NOINDEX,FOLLOW</noindexparams>
                 <noindexparamssearch>1</noindexparamssearch>
                 <category_h1>1</category_h1>
                 <forcecanonical>1</forcecanonical>

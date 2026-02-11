@@ -21,11 +21,18 @@ namespace FlipDev\Seo\Api;
 interface ConfigInterface
 {
     /**
-     * Check if NOINDEX is enabled for filtered category pages
+     * Check if robots meta tag is enabled for filtered category pages
      *
      * @return bool
      */
     public function isNoIndexForFilteredCategoriesEnabled(): bool;
+
+    /**
+     * Get the robots meta tag value for filtered category pages
+     *
+     * @return string|null Returns e.g. "NOINDEX,FOLLOW" or "NOINDEX,NOFOLLOW", null if disabled
+     */
+    public function getFilteredCategoryRobots(): ?string;
 
     /**
      * Check if NOINDEX is enabled for search results

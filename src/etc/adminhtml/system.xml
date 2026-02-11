@@ -14,8 +14,9 @@
                    showInStore="1">
                 <label>SEO Settings</label>
                 <field id="noindexparams" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Use NOINDEX, FOLLOW Meta Tag on Filtered Category Pages</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <label>Meta Robots for Filtered Category Pages</label>
+                    <source_model>FlipDev\Seo\Model\Source\FilterRobots</source_model>
+                    <comment><![CDATA[NOINDEX,FOLLOW: prevents indexing but allows Google to follow filter links. NOINDEX,NOFOLLOW: prevents both indexing and crawling of filter links (recommended to reduce crawl waste).]]></comment>
                 </field>
                 <field id="noindexparamssearch" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Use NOINDEX, FOLLOW Meta Tag on Search Results Page</label>
