@@ -80,10 +80,7 @@ class Data extends AbstractHelper
         $string = preg_replace('/\s+/', ' ', $string);
 
         // Trim leading and trailing whitespace
-        $string = trim($string);
-
-        // Escape quotes and slashes
-        return addcslashes($string, '"\\/');
+        return trim($string);
     }
 
     /**
