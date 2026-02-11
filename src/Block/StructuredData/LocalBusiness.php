@@ -202,6 +202,22 @@ class LocalBusiness extends \FlipDev\Seo\Block\Template
     }
 
     /**
+     * Get business image URL
+     *
+     * @return string
+     */
+    public function getImageUrl(): string
+    {
+        $imagePath = $this->helper->getConfig('flipdev_seo/localbusiness_sd/image');
+        if ($imagePath) {
+            return $this->_storeManager->getStore()
+                ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'flipdev/seo/' . $imagePath;
+        }
+
+        return '';
+    }
+
+    /**
      * Get logo URL
      *
      * @return string
@@ -252,6 +268,11 @@ class LocalBusiness extends \FlipDev\Seo\Block\Template
 
         if ($logo = $this->getLogoUrl()) {
             $data['logo'] = $logo;
+        }
+
+        if ($image = $this->getImageUrl()) {
+            $data['image'] = $image;
+        } elseif ($logo) {
             $data['image'] = $logo;
         }
 

@@ -1160,7 +1160,7 @@ class Product extends \FlipDev\Seo\Block\Template
             '@type' => 'VideoObject',
             'name' => $videoData->getVideoTitle() ?: $product->getName(),
             'description' => $videoData->getVideoDescription() ?: $this->getProductDescription(),
-            'uploadDate' => $product->getCreatedAt() ? date('Y-m-d', strtotime($product->getCreatedAt())) : date('Y-m-d'),
+            'uploadDate' => $product->getCreatedAt() ? date('Y-m-d\TH:i:sP', strtotime($product->getCreatedAt())) : date('Y-m-d\TH:i:sP'),
         ];
 
         // Handle YouTube URLs

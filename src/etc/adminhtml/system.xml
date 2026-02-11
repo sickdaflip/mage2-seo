@@ -555,6 +555,16 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="image" translate="label" type="image" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Business Image</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">flipdev/seo</upload_dir>
+                    <base_url type="media" scope_info="1">flipdev/seo</base_url>
+                    <comment><![CDATA[Photo of your business/storefront. Falls back to store logo if empty.]]></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <!--
