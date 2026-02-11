@@ -2,9 +2,9 @@
     <body>
         <referenceBlock name="head.additional">
             <!-- Organization Structured Data -->
-            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd"
-                   template="FlipDev_Seo::structureddata/js.phtml" before="-">
-                <block class="FlipDev\Seo\Block\StructuredData\Organization" name="flipdevseo.sd.organization" template="FlipDev_Seo::structureddata/organization.phtml" ifconfig="flipdev_seo/organization_sd/enabled" />
+            <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd.organization.wrapper"
+                   template="FlipDev_Seo::structureddata/js.phtml" before="-" ifconfig="flipdev_seo/organization_sd/enabled">
+                <block class="FlipDev\Seo\Block\StructuredData\Organization" name="flipdevseo.sd.organization" template="FlipDev_Seo::structureddata/organization.phtml" />
             </block>
             <!-- WebSite Structured Data -->
             <block class="Magento\Framework\View\Element\Template" name="flipdevseo.sd.website.wrapper"

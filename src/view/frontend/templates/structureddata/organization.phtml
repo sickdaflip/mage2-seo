@@ -2,21 +2,10 @@
 declare(strict_types=1);
 
 /** @var \FlipDev\Seo\Block\StructuredData\Organization $block */
-?>
-{
-"@context": "http://schema.org",
-"@type": "Organization",
-"url": "<?php echo $block->getUrl(''); ?>",
-"logo": "<?php echo $block->getLogoUrl() ?>",
-"address": {
-    "@type": "PostalAddress",
-    "streetAddress": "<?php echo $block->getConfig('flipdev_seo/organization_sd/street_address') ?>",
-    "addressLocality": "<?php echo $block->getConfig('flipdev_seo/organization_sd/address_locality') ?>",
-    "addressRegion": "<?php echo $block->getConfig('flipdev_seo/organization_sd/region') ?>",
-    "postalCode": "<?php echo $block->getConfig('flipdev_seo/organization_sd/postcode') ?>"
-},
-<?php if (count($block->getSocialProfiles()) && $block->getConfig('flipdev_seo/social_sd/enabled')) : ?><?php $_i = 1 ?>"sameAs" : [<?php foreach ($block->getSocialProfiles() as $profile) : ?>"<?php echo trim($profile) ?>"<?php echo ($_i != count($block->getSocialProfiles()) ? ',' : '') ?><?php $_i++ ?><?php endforeach ?>],
-<?php endif ?>
-"name": "<?php echo $block->getConfig('general/store_information/name') ?>",
-"telephone": "<?php echo $block->getConfig('general/store_information/phone') ?>"
+
+$data = $block->getStructuredData();
+if (empty($data)) {
+    return;
 }
+
+echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

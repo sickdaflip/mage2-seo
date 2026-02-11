@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 /** @var \Magento\Framework\View\Element\Template $block */
+$childHtml = trim((string) $block->getChildHtml());
+if ($childHtml):
 ?>
 <script type="application/ld+json">
-    <?php echo $block->getChildHtml() ?>
+<?= $childHtml ?>
 </script>
+<?php endif; ?>
