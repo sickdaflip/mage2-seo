@@ -78,6 +78,7 @@ class Organization extends \FlipDev\Seo\Block\Template
                 'addressLocality' => $this->helper->getConfig('flipdev_seo/organization_sd/address_locality') ?? '',
                 'addressRegion' => $this->helper->getConfig('flipdev_seo/organization_sd/region') ?? '',
                 'postalCode' => $this->helper->getConfig('flipdev_seo/organization_sd/postcode') ?? '',
+                'addressCountry' => $this->helper->getConfig('general/store_information/country_id') ?? '',
             ],
         ];
 
