@@ -8,6 +8,7 @@ namespace FlipDev\Seo\Model\XmlSitemap;
 
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -84,18 +85,32 @@ class CategoryGenerator extends AbstractGenerator
      */
     private function getCategoryImageUrl($category, int $storeId): ?string
     {
-        $imageUrl = $category->getImageUrl();
+        $image = $category->getImage();
 
-        if (!$imageUrl) {
+        if (!$image || !is_string($image)) {
             return null;
         }
 
-        if (str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')) {
-            return $imageUrl;
+        // Already a full URL
+        if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://')) {
+            return $image;
         }
 
-        $baseUrl = $this->getBaseUrl($storeId);
-        return $baseUrl . '/' . ltrim($imageUrl, '/');
+        try {
+            $store = $this->storeManager->getStore($storeId);
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        // Relative path from root (e.g., /media/catalog/category/foo.jpg)
+        if (str_starts_with($image, '/')) {
+            $baseUrl = rtrim($store->getBaseUrl(UrlInterface::URL_TYPE_WEB), '/');
+            return $baseUrl . $image;
+        }
+
+        // Just a filename (e.g., foo.jpg)
+        $mediaUrl = rtrim($store->getBaseUrl(UrlInterface::URL_TYPE_MEDIA), '/');
+        return $mediaUrl . '/catalog/category/' . $image;
     }
 
     /**
