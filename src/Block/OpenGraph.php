@@ -21,30 +21,11 @@ use Magento\Tax\Model\Calculation as TaxCalculation;
 
 class OpenGraph extends Template
 {
-    /**
-     * @var PageConfig
-     */
-    protected $pageConfig;
-
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $registry;
-
-    /**
-     * @var \Magento\Catalog\Helper\Image
-     */
-    protected $imageHelper;
-
-    /**
-     * @var TaxCalculation
-     */
-    protected $taxCalculation;
-
-    /**
-     * @var string
-     */
-    protected $pageType = 'website';
+    protected PageConfig $pageConfig;
+    protected \Magento\Framework\Registry $registry;
+    protected \Magento\Catalog\Helper\Image $imageHelper;
+    protected TaxCalculation $taxCalculation;
+    protected string $pageType = 'website';
 
     /**
      * @param Context $context

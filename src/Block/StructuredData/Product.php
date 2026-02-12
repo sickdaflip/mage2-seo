@@ -15,6 +15,7 @@ namespace FlipDev\Seo\Block\StructuredData;
 
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Review\Model\ReviewFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Helper\Data as CatalogHelper;
@@ -23,55 +24,18 @@ use Magento\Framework\App\ResourceConnection;
 
 class Product extends \FlipDev\Seo\Block\Template
 {
-    /**
-     * @var \Magento\Bundle\Model\Product\Price
-     */
-    protected $_bundlePrice;
-
-    /**
-     * @var ProductInterface|null
-     */
-    protected $_product = null;
-
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $_coreRegistry;
-
-    /**
-     * @var PriceCurrencyInterface
-     */
-    protected $priceCurrency;
-
-    /**
-     * @var ReviewFactory
-     */
-    protected $reviewFactory;
-
-    /**
-     * @var StoreManagerInterface
-     */
-    protected $storeManager;
-
-    /**
-     * @var \Magento\Catalog\Helper\Image
-     */
-    protected $imageHelper;
-
-    /**
-     * @var CatalogHelper
-     */
-    protected $catalogHelper;
-
-    /**
-     * @var TaxCalculation
-     */
-    protected $taxCalculation;
-
-    /**
-     * @var ResourceConnection
-     */
-    protected $resourceConnection;
+    protected \Magento\Bundle\Model\Product\Price $_bundlePrice;
+    protected ?ProductInterface $_product = null;
+    protected \Magento\Framework\Registry $_coreRegistry;
+    protected PriceCurrencyInterface $priceCurrency;
+    protected ReviewFactory $reviewFactory;
+    protected StoreManagerInterface $storeManager;
+    protected \Magento\Catalog\Helper\Image $imageHelper;
+    protected CatalogHelper $catalogHelper;
+    protected TaxCalculation $taxCalculation;
+    protected ResourceConnection $resourceConnection;
+    protected CategoryRepositoryInterface $categoryRepository;
+    private ?array $catalogRuleEndDateCache = null;
 
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
@@ -84,6 +48,7 @@ class Product extends \FlipDev\Seo\Block\Template
      * @param CatalogHelper $catalogHelper
      * @param TaxCalculation $taxCalculation
      * @param ResourceConnection $resourceConnection
+     * @param CategoryRepositoryInterface $categoryRepository
      * @param array $data
      */
     public function __construct(
@@ -97,6 +62,7 @@ class Product extends \FlipDev\Seo\Block\Template
         CatalogHelper $catalogHelper,
         TaxCalculation $taxCalculation,
         ResourceConnection $resourceConnection,
+        CategoryRepositoryInterface $categoryRepository,
         array $data = []
     ) {
         $this->_coreRegistry = $registry;
@@ -108,6 +74,7 @@ class Product extends \FlipDev\Seo\Block\Template
         $this->catalogHelper = $catalogHelper;
         $this->taxCalculation = $taxCalculation;
         $this->resourceConnection = $resourceConnection;
+        $this->categoryRepository = $categoryRepository;
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -620,9 +587,10 @@ class Product extends \FlipDev\Seo\Block\Template
         if (!empty($categoryIds)) {
             $categoryId = end($categoryIds);
             try {
-                $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-                $category = $objectManager->get(\Magento\Catalog\Api\CategoryRepositoryInterface::class)
-                    ->get($categoryId, $this->storeManager->getStore()->getId());
+                $category = $this->categoryRepository->get(
+                    $categoryId,
+                    $this->storeManager->getStore()->getId()
+                );
                 return $this->helper->cleanString($category->getName());
             } catch (\Exception $e) {
                 return null;
@@ -699,6 +667,12 @@ class Product extends \FlipDev\Seo\Block\Template
      */
     public function getCatalogRuleEndDate(): ?string
     {
+        if ($this->catalogRuleEndDateCache !== null) {
+            return $this->catalogRuleEndDateCache['date'];
+        }
+
+        $this->catalogRuleEndDateCache = ['date' => null];
+
         $product = $this->getProduct();
         if (!$product) {
             return null;
@@ -725,14 +699,14 @@ class Product extends \FlipDev\Seo\Block\Template
                 $to = new \DateTime($endDate);
                 $to->setTime(23, 59, 59);
                 if ($to >= new \DateTime()) {
-                    return date('Y-m-d', strtotime($endDate));
+                    $this->catalogRuleEndDateCache['date'] = date('Y-m-d', strtotime($endDate));
                 }
             }
         } catch (\Exception $e) {
             // Table may not exist or query fails
         }
 
-        return null;
+        return $this->catalogRuleEndDateCache['date'];
     }
 
     /**

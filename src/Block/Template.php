@@ -16,7 +16,7 @@ namespace FlipDev\Seo\Block {
     class Template extends \Magento\Framework\View\Element\Template
     {
 
-        protected $helper;
+        protected \FlipDev\Seo\Helper\Data $helper;
 
         /**
          * @param \Magento\Framework\View\Element\Template\Context $context

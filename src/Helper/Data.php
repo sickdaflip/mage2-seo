@@ -48,18 +48,26 @@ class Data extends AbstractHelper
      * Get configuration value with caching
      *
      * @param string $configPath
+     * @param \Magento\Store\Api\Data\StoreInterface|int|string|null $store
      * @return string|null
      */
-    public function getConfig(string $configPath): ?string
+    public function getConfig(string $configPath, $store = null): ?string
     {
-        if (!isset($this->configCache[$configPath])) {
-            $this->configCache[$configPath] = $this->scopeConfig->getValue(
+        $storeId = null;
+        if ($store !== null) {
+            $storeId = is_object($store) ? $store->getId() : $store;
+        }
+
+        $cacheKey = $configPath . '_' . ($storeId ?? 'default');
+        if (!isset($this->configCache[$cacheKey])) {
+            $this->configCache[$cacheKey] = $this->scopeConfig->getValue(
                 $configPath,
-                ScopeInterface::SCOPE_STORE
+                ScopeInterface::SCOPE_STORE,
+                $storeId
             );
         }
-        
-        return $this->configCache[$configPath];
+
+        return $this->configCache[$cacheKey];
     }
 
     /**
@@ -200,7 +208,7 @@ class Data extends AbstractHelper
         if (!is_callable([$object, 'getMetaTitle']) || !is_callable([$object, 'setMetaTitle'])) {
             $this->logger->warning(
                 'FlipDev_Seo: Object does not support meta data',
-                ['class' => get_class($object)]
+                ['class' => $object::class]
             );
             return;
         }
