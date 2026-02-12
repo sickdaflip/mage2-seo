@@ -416,7 +416,11 @@ class Product extends \FlipDev\Seo\Block\Template
         if ($product) {
             $specialToDate = $product->getSpecialToDate();
             if ($specialToDate) {
-                return date('Y-m-d', strtotime($specialToDate));
+                $to = new \DateTime($specialToDate);
+                $to->setTime(23, 59, 59);
+                if ($to >= new \DateTime()) {
+                    return date('Y-m-d', strtotime($specialToDate));
+                }
             }
         }
 
@@ -705,7 +709,11 @@ class Product extends \FlipDev\Seo\Block\Template
 
         $toDate = $product->getSpecialToDate();
         if ($toDate) {
-            return date('Y-m-d', strtotime($toDate));
+            $to = new \DateTime($toDate);
+            $to->setTime(23, 59, 59);
+            if ($to >= new \DateTime()) {
+                return date('Y-m-d', strtotime($toDate));
+            }
         }
 
         return null;
