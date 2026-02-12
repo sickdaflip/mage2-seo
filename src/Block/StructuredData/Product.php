@@ -19,6 +19,7 @@ use Magento\Review\Model\ReviewFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Tax\Model\Calculation as TaxCalculation;
+use Magento\Framework\App\ResourceConnection;
 
 class Product extends \FlipDev\Seo\Block\Template
 {
@@ -68,6 +69,11 @@ class Product extends \FlipDev\Seo\Block\Template
     protected $taxCalculation;
 
     /**
+     * @var ResourceConnection
+     */
+    protected $resourceConnection;
+
+    /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \FlipDev\Seo\Helper\Data $flipDevSeoHelper
      * @param \Magento\Framework\Registry $registry
@@ -77,6 +83,7 @@ class Product extends \FlipDev\Seo\Block\Template
      * @param \Magento\Catalog\Helper\Image $imageHelper
      * @param CatalogHelper $catalogHelper
      * @param TaxCalculation $taxCalculation
+     * @param ResourceConnection $resourceConnection
      * @param array $data
      */
     public function __construct(
@@ -89,6 +96,7 @@ class Product extends \FlipDev\Seo\Block\Template
         \Magento\Catalog\Helper\Image $imageHelper,
         CatalogHelper $catalogHelper,
         TaxCalculation $taxCalculation,
+        ResourceConnection $resourceConnection,
         array $data = []
     ) {
         $this->_coreRegistry = $registry;
@@ -99,6 +107,7 @@ class Product extends \FlipDev\Seo\Block\Template
         $this->imageHelper = $imageHelper;
         $this->catalogHelper = $catalogHelper;
         $this->taxCalculation = $taxCalculation;
+        $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -414,6 +423,7 @@ class Product extends \FlipDev\Seo\Block\Template
     {
         $product = $this->getProduct();
         if ($product) {
+            // Check special price to_date
             $specialToDate = $product->getSpecialToDate();
             if ($specialToDate) {
                 $to = new \DateTime($specialToDate);
@@ -421,6 +431,12 @@ class Product extends \FlipDev\Seo\Block\Template
                 if ($to >= new \DateTime()) {
                     return date('Y-m-d', strtotime($specialToDate));
                 }
+            }
+
+            // Check catalog price rule end date
+            $catalogRuleEndDate = $this->getCatalogRuleEndDate();
+            if ($catalogRuleEndDate) {
+                return $catalogRuleEndDate;
             }
         }
 
@@ -656,6 +672,67 @@ class Product extends \FlipDev\Seo\Block\Template
         }
 
         return true;
+    }
+
+    /**
+     * Check if product has an active catalog price rule discount
+     *
+     * @return bool
+     */
+    public function hasCatalogRulePrice(): bool
+    {
+        $product = $this->getProduct();
+        if (!$product || $this->hasSpecialPrice()) {
+            return false;
+        }
+
+        $finalPrice = (float)$product->getFinalPrice();
+        $regularPrice = (float)$product->getPrice();
+
+        return $finalPrice > 0 && $finalPrice < $regularPrice;
+    }
+
+    /**
+     * Get the end date of the active catalog price rule for this product
+     *
+     * @return string|null
+     */
+    public function getCatalogRuleEndDate(): ?string
+    {
+        $product = $this->getProduct();
+        if (!$product) {
+            return null;
+        }
+
+        try {
+            $connection = $this->resourceConnection->getConnection();
+            $tableName = $this->resourceConnection->getTableName('catalogrule_product_price');
+            $websiteId = (int)$this->storeManager->getStore()->getWebsiteId();
+            $today = date('Y-m-d');
+
+            $select = $connection->select()
+                ->from($tableName, ['earliest_end_date'])
+                ->where('product_id = ?', (int)$product->getId())
+                ->where('website_id = ?', $websiteId)
+                ->where('rule_date = ?', $today)
+                ->where('earliest_end_date IS NOT NULL')
+                ->order('earliest_end_date ASC')
+                ->limit(1);
+
+            $endDate = $connection->fetchOne($select);
+
+            if ($endDate) {
+                $to = new \DateTime($endDate);
+                $to->setTime(23, 59, 59);
+                if ($to >= new \DateTime()) {
+                    return date('Y-m-d', strtotime($endDate));
+                }
+            }
+        } catch (\Exception $e) {
+            // Table may not exist or query fails
+        }
+
+        return null;
     }
 
     /**

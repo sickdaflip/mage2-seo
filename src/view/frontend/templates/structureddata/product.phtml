@@ -127,6 +127,15 @@ if ($block->hasPriceRange()) {
             // No end date, use 1 year as default
             $offer['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
         }
+    } elseif ($block->hasCatalogRulePrice()) {
+        // Catalog price rule is active
+        $ruleEndDate = $block->getCatalogRuleEndDate();
+        if ($ruleEndDate) {
+            $offer['priceValidUntil'] = $ruleEndDate;
+        } else {
+            // No end date or expired, use 1 year as default
+            $offer['priceValidUntil'] = date('Y-m-d', strtotime('+1 year'));
+        }
     } else {
         // Regular price, use 1 year validity
         $offer['priceValidUntil'] = $block->getPriceValidUntil();
