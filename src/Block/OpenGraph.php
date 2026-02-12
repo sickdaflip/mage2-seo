@@ -17,6 +17,7 @@ use Magento\Framework\View\Element\Template\Context;
 use FlipDev\Seo\Helper\Data as SeoHelper;
 use Magento\Framework\View\Page\Config as PageConfig;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Tax\Model\Calculation as TaxCalculation;
 
 class OpenGraph extends Template
 {
@@ -36,6 +37,11 @@ class OpenGraph extends Template
     protected $imageHelper;
 
     /**
+     * @var TaxCalculation
+     */
+    protected $taxCalculation;
+
+    /**
      * @var string
      */
     protected $pageType = 'website';
@@ -46,6 +52,7 @@ class OpenGraph extends Template
      * @param PageConfig $pageConfig
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Catalog\Helper\Image $imageHelper
+     * @param TaxCalculation $taxCalculation
      * @param array $data
      */
     public function __construct(
@@ -54,11 +61,13 @@ class OpenGraph extends Template
         PageConfig $pageConfig,
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Helper\Image $imageHelper,
+        TaxCalculation $taxCalculation,
         array $data = []
     ) {
         $this->pageConfig = $pageConfig;
         $this->registry = $registry;
         $this->imageHelper = $imageHelper;
+        $this->taxCalculation = $taxCalculation;
         parent::__construct($context, $flipDevSeoHelper, $data);
     }
 
@@ -204,11 +213,53 @@ class OpenGraph extends Template
             return null;
         }
 
+        $price = $this->getPriceWithTax($product, (float)$product->getFinalPrice());
+
         return [
-            'price' => number_format((float)$product->getFinalPrice(), 2, '.', ''),
+            'price' => number_format($price, 2, '.', ''),
             'currency' => $this->_storeManager->getStore()->getCurrentCurrencyCode(),
             'availability' => $product->isAvailable() ? 'instock' : 'outofstock',
             'brand' => $product->getAttributeText('manufacturer') ?: '',
         ];
+    }
+
+    /**
+     * Calculate price with tax using direct tax rate lookup
+     *
+     * @param \Magento\Catalog\Api\Data\ProductInterface $product
+     * @param float $price
+     * @return float
+     */
+    protected function getPriceWithTax($product, float $price): float
+    {
+        try {
+            $store = $this->_storeManager->getStore();
+
+            $priceIncludesTax = (bool)$this->helper->getConfig(
+                \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX,
+                $store
+            );
+
+            if ($priceIncludesTax) {
+                return $price;
+            }
+
+            $taxClassId = $product->getTaxClassId();
+            if (!$taxClassId) {
+                return $price;
+            }
+
+            $request = $this->taxCalculation->getRateRequest(null, null, null, $store);
+            $request->setProductClassId($taxClassId);
+            $taxRate = $this->taxCalculation->getRate($request);
+
+            if ($taxRate > 0) {
+                return $price * (1 + ($taxRate / 100));
+            }
+
+            return $price;
+        } catch (\Exception $e) {
+            return $price;
+        }
     }
 }
